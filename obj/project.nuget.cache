@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "9yrhDIGCJks=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Jameer\\OneDrive\\Documents\\Jameers Stuff\\Coding\\CEDAC-WebPress\\WebPresDB\\WebPresDB.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Jameer\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.8\\microsoft.aspnetcore.app.internal.assets.10.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}
