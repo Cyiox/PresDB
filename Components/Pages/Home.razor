@@ -1,7 +1,118 @@
 ﻿@page "/"
+@inject IPropertyService PropertyService // Replace with your service or HttpClient
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Home - WebPresDB</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="row align-items-end mb-4">
+    <div class="col-lg-8"></div>
 
-Welcome to your new app.
+    <div class="panel-shell">
+        <div class="row g-4 align-items-start">
+            <div class="mini-search-panel">
+                <h3 class="h5 mb-3">Property search</h3>
+
+                <!-- Blazor Native Form handling -->
+                <form @onsubmit="HandleSearchSubmit" class="d-grid gap-3">
+                    <div>
+                        <label class="form-label" for="q">Search term</label>
+                        <input class="form-control" type="text" id="q" placeholder="Project ID, name, city, address"
+                               value="@searchTerm" @oninput="OnSearchTermInput" />
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="project_city">City</label>
+                            <input class="form-control" type="text" id="project_city" @bind="projectCity"
+                                   @bind:event="oninput" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="property_id">Project ID</label>
+                            <input class="form-control" type="text" id="property_id" @bind="propertyId"
+                                   @bind:event="oninput" />
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-lg" type="submit" disabled="@isLoading">
+                        @if (isLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                        }
+                        Search properties
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dynamic Results Container -->
+        <div id="search-results" class="mt-4">
+            @if (isLoading)
+            {
+                <p class="text-muted">Searching...</p>
+            }
+            else if (searchResults.Any())
+            {
+                <!-- Render search results natively -->
+                <SearchResultsList Properties="searchResults" />
+            }
+            else if (hasSearched)
+            {
+                <p class="text-muted">No properties found matching your criteria.</p>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string searchTerm = "";
+    private string projectCity = "";
+    private string propertyId = "";
+
+    private bool isLoading = false;
+    private bool hasSearched = false;
+
+    private List<PropertyModel> searchResults = new();
+    private CancellationTokenSource? debounceCts;
+
+    // Replicating HTMX's delay:400ms debounce behavior for typing
+    private async Task OnSearchTermInput(ChangeEventArgs e)
+    {
+        searchTerm = e.Value?.ToString() ?? "";
+
+        debounceCts?.Cancel();
+        debounceCts = new CancellationTokenSource();
+
+        try
+        {
+            await Task.Delay(400, debounceCts.Token);
+            await ExecuteSearchAsync();
+        }
+        catch (TaskCanceledException)
+        {
+            // Ignore if the user kept typing before 400ms finished
+        }
+    }
+
+    private async Task HandleSearchSubmit()
+    {
+        debounceCts?.Cancel(); // Cancel any pending live search
+        await ExecuteSearchAsync();
+    }
+
+    private async Task ExecuteSearchAsync()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            // Call C# data service directly instead of returning raw HTML snippets
+            searchResults = await PropertyService.SearchPropertiesAsync(searchTerm, projectCity, propertyId);
+            hasSearched = true;
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+}
