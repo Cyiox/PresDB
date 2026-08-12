@@ -1,0 +1,5 @@
+-- 1. Get your exact login name
+SELECT SUSER_SNAME();
+
+-- 2. Grant bulkadmin to your login (replace DOMAIN\User with the result from step 1)
+ALTER SERVER ROLE [bulkadmin] ADD MEMBER [CEDAC\jgomez-santos];
