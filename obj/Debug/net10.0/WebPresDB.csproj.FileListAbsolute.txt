@@ -82,5 +82,5 @@ C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\refin
 C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\WebPresDB.pdb
 C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\WebPresDB.genruntimeconfig.cache
 C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\ref\WebPresDB.dll
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\i2yf7heyd2-{0}-32mq9xsbbo-32mq9xsbbo.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\s43g9buja9-{0}-32mq9xsbbo-32mq9xsbbo.gz
+C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\i2yf7heyd2-{0}-n2y4bphjqr-n2y4bphjqr.gz
+C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\s43g9buja9-{0}-n2y4bphjqr-n2y4bphjqr.gz

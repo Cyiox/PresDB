@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebPresDB")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+430300072d801dce5affde3f88940615c4002de3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f45b3745439f62c539cceab0da0a0dc6e53b2b79")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebPresDB")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebPresDB")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
