@@ -1,17 +1,14 @@
 ﻿<nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
-        <!-- Logo / Brand -->
         <a class="navbar-brand d-flex align-items-center" href="">
             <img src="images/logo.png" alt="CEDAC Logo" />
         </a>
-
-        <!-- Hamburger Button for Mobile -->
+        @*  The button bellow is a hamburger menu for those using mobile devices.  *@
         <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu" aria-controls="navbarSupportedContent"
                 aria-expanded="@(!collapseNavMenu)" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Collapsible Content -->
         <div class="@NavMenuCssClass navbar-collapse" id="navbarSupportedContent" @onclick="ToggleNavMenu">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
@@ -37,7 +34,7 @@
 @code {
     private bool collapseNavMenu = true;
 
-    // Controls whether the CSS class 'collapse' is applied
+    // Controlls if Nav menu is compressed into a hamburger menu or not.
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
