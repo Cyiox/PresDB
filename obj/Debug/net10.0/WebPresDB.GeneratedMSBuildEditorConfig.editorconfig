@@ -43,6 +43,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Ob3RGb3VuZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/jameer/Documents/CEDAC/WebPresDB/Components/Pages/PropertyDetails.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Qcm9wZXJ0eURldGFpbHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/jameer/Documents/CEDAC/WebPresDB/Components/Pages/Reports.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9SZXBvcnRzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 

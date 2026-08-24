@@ -1,0 +1,130 @@
+{% load custom_tags %}
+<!-- Tab Content Body -->
+<div class="card-body tab-content id="propertyTabsContent">
+
+    <!-- TAB 1: HUD PROPERTY -->
+    <div class="tab-pane fade show active" id="hud-prop" role="tabpanel">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-0">property_name_text</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ property.property_name|default:'' }}" readonly>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-0">owner_organization_name</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ property.extra_data|get_item:'owner_organization_name'|default:'' }}" readonly>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-0">mgmt_agent_org_name</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ property.extra_data|get_item:'mgmt_agent_org_name'|default:'' }}" readonly>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-0">address_line1_text</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ property.street|default:'' }}" readonly>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-0">owner_address_line1</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ property.extra_data|get_item:'owner_address_line1'|default:'' }}" readonly>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-0">mgmt_agent_address_line1</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ property.extra_data|get_item:'mgmt_agent_address_line1'|default:'' }}" readonly>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-0">city_name_text / state_code</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ property.city }}, {{ property.state }}" readonly>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-0">owner_city / owner_state</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ property.extra_data|get_item:'owner_city_name'|default:'' }}" readonly>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small text-muted mb-0">mgmt_agent_city / state</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ property.extra_data|get_item:'mgmt_agent_city_name'|default:'' }}" readonly>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: HUD CONTRACT -->
+    <div class="tab-pane fade" id="hud-contract" role="tabpanel">
+        {% if current_contract %}
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-0">contract_number</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ current_contract.contract_number }}" readonly>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-0">tracs_effective_date</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ current_contract.tracs_effective_date|date:'Y-m-d'|default:'' }}" readonly>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-0">tracs_overall_expiration_date</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ current_contract.tracs_overall_expiration_date|date:'Y-m-d'|default:'' }}" readonly>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-0">assisted_units_count</label>
+                <input type="text" class="form-control form-control-sm bg-light" value="{{ current_contract.assisted_units_count|default:'' }}" readonly>
+            </div>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0 py-3">No contract records linked to this property.</p>
+        {% endif %}
+    </div>
+
+    <!-- TAB 3: COMMENTS -->
+    <div class="tab-pane fade" id="comments" role="tabpanel">
+        <textarea class="form-control bg-light" rows="5" readonly>{{ property.extra_data|get_item:'property_comments'|default:'No comments available.' }}</textarea>
+    </div>
+
+    <!-- TAB 4: RAW JSON ATTRIBUTES -->
+    <div class="tab-pane fade" id="raw-json" role="tabpanel">
+        <pre class="bg-dark text-light p-3 rounded mb-0" style="max-height: 350px; overflow-y: auto;"><code>{{ property.extra_data|pprint }}</code></pre>
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- 3. MS ACCESS-STYLE BOTTOM RECORD NAVIGATOR                                -->
+<!-- ========================================================================= -->
+<div class="card-footer bg-dark text-light d-flex justify-content-between align-items-center py-2">
+    <div class="d-flex align-items-center gap-2">
+        <span class="small me-2">Record:</span>
+        <div class="btn-group btn-group-sm" role="group">
+            <!-- First Record -->
+            <button class="btn btn-outline-light"
+                    hx-get="{% url 'property_detail' property.exp_use_property_id %}?record=0"
+                    hx-target="#tab-content-container"
+                    {% if record_idx == 0 %}disabled{% endif %}>&laquo; First</button>
+
+            <!-- Previous Record -->
+            <button class="btn btn-outline-light"
+                    hx-get="{% url 'property_detail' property.exp_use_property_id %}?record={{ prev_idx }}"
+                    hx-target="#tab-content-container"
+                    {% if record_idx == 0 %}disabled{% endif %}>&lsaquo; Prev</button>
+
+            <!-- Counter Indicator -->
+            <span class="btn btn-secondary disabled text-white px-3 fw-bold">
+                {{ record_num }} of {{ total_records }}
+            </span>
+
+            <!-- Next Record -->
+            <button class="btn btn-outline-light"
+                    hx-get="{% url 'property_detail' property.exp_use_property_id %}?record={{ next_idx }}"
+                    hx-target="#tab-content-container"
+                    {% if record_idx >= total_records|add:"-1" %}disabled{% endif %}>Next &rsaquo;</button>
+
+            <!-- Last Record -->
+            <button class="btn btn-outline-light"
+                    hx-get="{% url 'property_detail' property.exp_use_property_id %}?record={{ total_records|add:'-1' }}"
+                    hx-target="#tab-content-container"
+                    {% if record_idx >= total_records|add:"-1" %}disabled{% endif %}>Last &raquo;</button>
+        </div>
+    </div>
+
+    <div class="small text-muted">
+        {% if current_contract %}
+            Import ID: <code>{{ current_contract.import_id|default:"N/A" }}</code> | 
+            Import Date: <code>{{ current_contract.import_datetime|date:"N/j/Y g:i A"|default:"N/A" }}</code>
+        {% endif %}
+    </div>
+</div>

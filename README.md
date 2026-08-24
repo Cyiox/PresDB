@@ -21,3 +21,9 @@ This repository contains the code for CEDAC's web interface for the preservation
   - Contains logic. The decision tree and authentication / CRUD logic should be kept here. 
 - wwwroot
   - Contains static assets, like the CEDAC logo.
+
+
+
+## Known bugs
+
+- Query issues. For example, when searching for Elm Place in Cambridge, the details page is unable to locate the total number of units, among other information. Access version shows the intended 19 units. 

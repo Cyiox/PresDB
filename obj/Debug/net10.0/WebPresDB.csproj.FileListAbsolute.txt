@@ -1,86 +1,206 @@
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\bin\Debug\net10.0\appsettings.Development.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\bin\Debug\net10.0\appsettings.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\bin\Debug\net10.0\WebPresDB.staticwebassets.runtime.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\bin\Debug\net10.0\WebPresDB.staticwebassets.endpoints.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\bin\Debug\net10.0\WebPresDB.exe
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\bin\Debug\net10.0\WebPresDB.deps.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\bin\Debug\net10.0\WebPresDB.runtimeconfig.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\bin\Debug\net10.0\WebPresDB.dll
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\bin\Debug\net10.0\WebPresDB.pdb
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\EmbeddedAttribute.cs
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\ValidatableTypeAttribute.cs
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\rpswa.dswa.cache.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\WebPresDB.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\WebPresDB.AssemblyInfoInputs.cache
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\WebPresDB.AssemblyInfo.cs
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\WebPresDB.csproj.CoreCompileInputs.cache
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\WebPresDB.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\WebPresDB.sourcelink.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\rjimswa.dswa.cache.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\rjsmrazor.dswa.cache.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\scopedcss\Components\Layout\MainLayout.razor.rz.scp.css
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\scopedcss\Components\Layout\NavMenu.razor.rz.scp.css
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\scopedcss\Components\Layout\ReconnectModal.razor.rz.scp.css
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\scopedcss\bundle\WebPresDB.styles.css
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\scopedcss\projectbundle\WebPresDB.bundle.scp.css
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\ozl42gu0ms-{0}-khy4lop6wu-khy4lop6wu.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\1cgn2jpglz-{0}-t1cqhe9u97-t1cqhe9u97.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\c3av1mf2jo-{0}-c2jlpeoesf-c2jlpeoesf.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\mcq42xe2k7-{0}-sejl45xvog-sejl45xvog.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\e2po9sjmrr-{0}-aexeepp0ev-aexeepp0ev.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\hyuqznspqn-{0}-xvp3kq03qx-xvp3kq03qx.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\w0lh718awx-{0}-ausgxo2sd3-ausgxo2sd3.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\dygqkunjdq-{0}-22vffe00uq-22vffe00uq.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\gtfd8rnbpb-{0}-cosvhxvwiu-cosvhxvwiu.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\bmm5corjdf-{0}-qesaa3a1fm-qesaa3a1fm.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\tkl93xfld1-{0}-fvhpjtyr6v-fvhpjtyr6v.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\6htli9vmgj-{0}-tmc1g35s3z-tmc1g35s3z.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\isbegg57qt-{0}-fsbi9cje9m-fsbi9cje9m.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\lwpue645ip-{0}-rxsg74s51o-rxsg74s51o.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\k7jsvhai6g-{0}-ee0r1s7dh0-ee0r1s7dh0.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\oule7kokg0-{0}-q9ht133ko3-q9ht133ko3.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\uy5reb5mzw-{0}-jd9uben2k1-jd9uben2k1.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\pwh3mc75y8-{0}-gye83jo8yx-gye83jo8yx.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\zf387om2ag-{0}-r4e9w2rdcm-r4e9w2rdcm.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\5l6d9xkwsi-{0}-wl58j5mj3v-wl58j5mj3v.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\od6kna1woy-{0}-c2oey78nd0-c2oey78nd0.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\5k58ygii01-{0}-d4r6k3f320-d4r6k3f320.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\qiwq4fkq4u-{0}-j5mq2jizvt-j5mq2jizvt.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\sozm9opb61-{0}-keugtjm085-keugtjm085.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\ctez09tv78-{0}-nvvlpmu67g-nvvlpmu67g.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\7x0xd0fopr-{0}-zub09dkrxp-zub09dkrxp.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\s1hsquks83-{0}-pj5nd1wqec-pj5nd1wqec.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\7x0hg6fj8o-{0}-43atpzeawx-43atpzeawx.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\n8agx1sdtg-{0}-v0zj4ognzu-v0zj4ognzu.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\87ebyt6iee-{0}-ynyaa8k90p-ynyaa8k90p.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\yzhid897uh-{0}-hrwsygsryq-hrwsygsryq.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\ohl0or92rr-{0}-c63t5i9ira-c63t5i9ira.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\6zi9dnzcsn-{0}-ft3s53vfgj-ft3s53vfgj.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\uz769499tv-{0}-4094rpi4f9-4094rpi4f9.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\hoiqc2scv9-{0}-6pdc2jztkx-6pdc2jztkx.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\vovryuh0gw-{0}-hd3gran6i8-hd3gran6i8.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\5b3zjqh0ke-{0}-iovd86k7lj-iovd86k7lj.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\bham6rzvd6-{0}-ltid2c489k-ltid2c489k.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\05j15cirj8-{0}-kbrnm935zg-kbrnm935zg.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\d5my34mrsa-{0}-8vyfqsqgz1-8vyfqsqgz1.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\iasx05fehi-{0}-y7v9cxd14o-y7v9cxd14o.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\c3dhozy6ox-{0}-u9q1upor1n-u9q1upor1n.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\ba2yeqnxrk-{0}-h1s4sie4z3-h1s4sie4z3.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\iznnxso860-{0}-4d85u1mtcx-4d85u1mtcx.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\digequsrtm-{0}-0j3bgjxly4-0j3bgjxly4.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\onyszzo4gh-{0}-abdmv1u4y3-abdmv1u4y3.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\v6w6awcszh-{0}-ne14ti1q68-ne14ti1q68.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\aw0v3kojd8-{0}-ig5xotzpx5-ig5xotzpx5.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\staticwebassets.build.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\staticwebassets.build.json.cache
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\staticwebassets.development.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\staticwebassets.build.endpoints.json
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\swae.build.ex.cache
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\WebPresDB.dll
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\refint\WebPresDB.dll
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\WebPresDB.pdb
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\WebPresDB.genruntimeconfig.cache
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\ref\WebPresDB.dll
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\i2yf7heyd2-{0}-n2y4bphjqr-n2y4bphjqr.gz
-C:\Users\jgomez-santos\OneDrive - CEDAC\Documents\PresDB\obj\Debug\net10.0\compressed\s43g9buja9-{0}-n2y4bphjqr-n2y4bphjqr.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/bin/Debug/net10.0/appsettings.Development.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/bin/Debug/net10.0/appsettings.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/bin/Debug/net10.0/WebPresDB.staticwebassets.runtime.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/bin/Debug/net10.0/WebPresDB.staticwebassets.endpoints.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/bin/Debug/net10.0/WebPresDB.exe
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/bin/Debug/net10.0/WebPresDB.deps.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/bin/Debug/net10.0/WebPresDB.runtimeconfig.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/bin/Debug/net10.0/WebPresDB.dll
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/bin/Debug/net10.0/WebPresDB.pdb
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/EmbeddedAttribute.cs
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/ValidatableTypeAttribute.cs
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/rpswa.dswa.cache.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/WebPresDB.GeneratedMSBuildEditorConfig.editorconfig
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/WebPresDB.AssemblyInfoInputs.cache
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/WebPresDB.AssemblyInfo.cs
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/WebPresDB.csproj.CoreCompileInputs.cache
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/WebPresDB.MvcApplicationPartsAssemblyInfo.cache
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/WebPresDB.sourcelink.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/rjimswa.dswa.cache.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/rjsmrazor.dswa.cache.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/rjsmcshtml.dswa.cache.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/scopedcss/Components/Layout/MainLayout.razor.rz.scp.css
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/scopedcss/Components/Layout/NavMenu.razor.rz.scp.css
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/scopedcss/Components/Layout/ReconnectModal.razor.rz.scp.css
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/scopedcss/bundle/WebPresDB.styles.css
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/scopedcss/projectbundle/WebPresDB.bundle.scp.css
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/ozl42gu0ms-{0}-khy4lop6wu-khy4lop6wu.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/1cgn2jpglz-{0}-t1cqhe9u97-t1cqhe9u97.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/c3av1mf2jo-{0}-c2jlpeoesf-c2jlpeoesf.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/mcq42xe2k7-{0}-sejl45xvog-sejl45xvog.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/e2po9sjmrr-{0}-aexeepp0ev-aexeepp0ev.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/hyuqznspqn-{0}-xvp3kq03qx-xvp3kq03qx.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/w0lh718awx-{0}-ausgxo2sd3-ausgxo2sd3.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/dygqkunjdq-{0}-22vffe00uq-22vffe00uq.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/gtfd8rnbpb-{0}-cosvhxvwiu-cosvhxvwiu.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/bmm5corjdf-{0}-qesaa3a1fm-qesaa3a1fm.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/tkl93xfld1-{0}-fvhpjtyr6v-fvhpjtyr6v.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/6htli9vmgj-{0}-tmc1g35s3z-tmc1g35s3z.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/isbegg57qt-{0}-fsbi9cje9m-fsbi9cje9m.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/lwpue645ip-{0}-rxsg74s51o-rxsg74s51o.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/k7jsvhai6g-{0}-ee0r1s7dh0-ee0r1s7dh0.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/oule7kokg0-{0}-q9ht133ko3-q9ht133ko3.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/uy5reb5mzw-{0}-jd9uben2k1-jd9uben2k1.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/pwh3mc75y8-{0}-gye83jo8yx-gye83jo8yx.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/zf387om2ag-{0}-r4e9w2rdcm-r4e9w2rdcm.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/5l6d9xkwsi-{0}-wl58j5mj3v-wl58j5mj3v.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/od6kna1woy-{0}-c2oey78nd0-c2oey78nd0.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/5k58ygii01-{0}-d4r6k3f320-d4r6k3f320.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/qiwq4fkq4u-{0}-j5mq2jizvt-j5mq2jizvt.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/sozm9opb61-{0}-keugtjm085-keugtjm085.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/ctez09tv78-{0}-nvvlpmu67g-nvvlpmu67g.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/7x0xd0fopr-{0}-zub09dkrxp-zub09dkrxp.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/s1hsquks83-{0}-pj5nd1wqec-pj5nd1wqec.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/7x0hg6fj8o-{0}-43atpzeawx-43atpzeawx.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/n8agx1sdtg-{0}-v0zj4ognzu-v0zj4ognzu.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/87ebyt6iee-{0}-ynyaa8k90p-ynyaa8k90p.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/yzhid897uh-{0}-hrwsygsryq-hrwsygsryq.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/ohl0or92rr-{0}-c63t5i9ira-c63t5i9ira.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/6zi9dnzcsn-{0}-ft3s53vfgj-ft3s53vfgj.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/uz769499tv-{0}-4094rpi4f9-4094rpi4f9.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/hoiqc2scv9-{0}-6pdc2jztkx-6pdc2jztkx.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/vovryuh0gw-{0}-hd3gran6i8-hd3gran6i8.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/5b3zjqh0ke-{0}-iovd86k7lj-iovd86k7lj.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/bham6rzvd6-{0}-ltid2c489k-ltid2c489k.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/05j15cirj8-{0}-kbrnm935zg-kbrnm935zg.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/d5my34mrsa-{0}-8vyfqsqgz1-8vyfqsqgz1.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/iasx05fehi-{0}-y7v9cxd14o-y7v9cxd14o.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/c3dhozy6ox-{0}-u9q1upor1n-u9q1upor1n.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/ba2yeqnxrk-{0}-h1s4sie4z3-h1s4sie4z3.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/iznnxso860-{0}-4d85u1mtcx-4d85u1mtcx.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/digequsrtm-{0}-0j3bgjxly4-0j3bgjxly4.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/onyszzo4gh-{0}-abdmv1u4y3-abdmv1u4y3.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/v6w6awcszh-{0}-ne14ti1q68-ne14ti1q68.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/aw0v3kojd8-{0}-ig5xotzpx5-ig5xotzpx5.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/staticwebassets.build.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/staticwebassets.build.json.cache
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/staticwebassets.development.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/staticwebassets.build.endpoints.json
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/swae.build.ex.cache
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/WebPresDB.dll
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/refint/WebPresDB.dll
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/WebPresDB.pdb
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/WebPresDB.genruntimeconfig.cache
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/ref/WebPresDB.dll
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/i2yf7heyd2-{0}-n2y4bphjqr-n2y4bphjqr.gz
+C:/Users/jgomez-santos/OneDrive - CEDAC/Documents/PresDB/obj/Debug/net10.0/compressed/s43g9buja9-{0}-n2y4bphjqr-n2y4bphjqr.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/appsettings.Development.json
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/appsettings.json
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/WebPresDB.staticwebassets.runtime.json
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/WebPresDB.staticwebassets.endpoints.json
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/WebPresDB
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/WebPresDB.deps.json
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/WebPresDB.runtimeconfig.json
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/WebPresDB.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/WebPresDB.pdb
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/EmbeddedAttribute.cs
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/ValidatableTypeAttribute.cs
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/rpswa.dswa.cache.json
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/WebPresDB.GeneratedMSBuildEditorConfig.editorconfig
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/WebPresDB.AssemblyInfoInputs.cache
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/WebPresDB.AssemblyInfo.cs
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/WebPresDB.csproj.CoreCompileInputs.cache
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/WebPresDB.MvcApplicationPartsAssemblyInfo.cache
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/WebPresDB.sourcelink.json
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/rjimswa.dswa.cache.json
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/rjsmrazor.dswa.cache.json
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/rjsmcshtml.dswa.cache.json
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/scopedcss/Components/Layout/MainLayout.razor.rz.scp.css
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/scopedcss/Components/Layout/NavMenu.razor.rz.scp.css
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/scopedcss/Components/Layout/ReconnectModal.razor.rz.scp.css
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/scopedcss/bundle/WebPresDB.styles.css
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/scopedcss/projectbundle/WebPresDB.bundle.scp.css
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/1cgn2jpglz-{0}-bqjiyaj88i-bqjiyaj88i.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/c3av1mf2jo-{0}-c2jlpeoesf-c2jlpeoesf.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/mcq42xe2k7-{0}-erw9l3u2r3-erw9l3u2r3.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/e2po9sjmrr-{0}-aexeepp0ev-aexeepp0ev.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/hyuqznspqn-{0}-d7shbmvgxk-d7shbmvgxk.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/w0lh718awx-{0}-ausgxo2sd3-ausgxo2sd3.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/dygqkunjdq-{0}-k8d9w2qqmf-k8d9w2qqmf.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/gtfd8rnbpb-{0}-cosvhxvwiu-cosvhxvwiu.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/bmm5corjdf-{0}-ub07r2b239-ub07r2b239.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/tkl93xfld1-{0}-fvhpjtyr6v-fvhpjtyr6v.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/6htli9vmgj-{0}-b7pk76d08c-b7pk76d08c.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/isbegg57qt-{0}-fsbi9cje9m-fsbi9cje9m.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/lwpue645ip-{0}-rzd6atqjts-rzd6atqjts.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/k7jsvhai6g-{0}-ee0r1s7dh0-ee0r1s7dh0.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/oule7kokg0-{0}-dxx9fxp4il-dxx9fxp4il.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/uy5reb5mzw-{0}-jd9uben2k1-jd9uben2k1.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/pwh3mc75y8-{0}-khv3u5hwcm-khv3u5hwcm.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/zf387om2ag-{0}-r4e9w2rdcm-r4e9w2rdcm.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/5l6d9xkwsi-{0}-lcd1t2u6c8-lcd1t2u6c8.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/od6kna1woy-{0}-c2oey78nd0-c2oey78nd0.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/5k58ygii01-{0}-tdbxkamptv-tdbxkamptv.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/qiwq4fkq4u-{0}-j5mq2jizvt-j5mq2jizvt.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/sozm9opb61-{0}-06098lyss8-06098lyss8.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/ctez09tv78-{0}-nvvlpmu67g-nvvlpmu67g.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/7x0xd0fopr-{0}-s35ty4nyc5-s35ty4nyc5.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/s1hsquks83-{0}-pj5nd1wqec-pj5nd1wqec.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/7x0hg6fj8o-{0}-46ein0sx1k-46ein0sx1k.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/n8agx1sdtg-{0}-v0zj4ognzu-v0zj4ognzu.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/87ebyt6iee-{0}-37tfw0ft22-37tfw0ft22.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/yzhid897uh-{0}-hrwsygsryq-hrwsygsryq.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/ohl0or92rr-{0}-pk9g2wxc8p-pk9g2wxc8p.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/6zi9dnzcsn-{0}-ft3s53vfgj-ft3s53vfgj.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/uz769499tv-{0}-6cfz1n2cew-6cfz1n2cew.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/hoiqc2scv9-{0}-6pdc2jztkx-6pdc2jztkx.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/vovryuh0gw-{0}-493y06b0oq-493y06b0oq.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/5b3zjqh0ke-{0}-iovd86k7lj-iovd86k7lj.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/bham6rzvd6-{0}-vr1egmr9el-vr1egmr9el.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/05j15cirj8-{0}-kbrnm935zg-kbrnm935zg.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/d5my34mrsa-{0}-jj8uyg4cgr-jj8uyg4cgr.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/iasx05fehi-{0}-y7v9cxd14o-y7v9cxd14o.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/c3dhozy6ox-{0}-notf2xhcfb-notf2xhcfb.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/ba2yeqnxrk-{0}-h1s4sie4z3-h1s4sie4z3.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/iznnxso860-{0}-63fj8s7r0e-63fj8s7r0e.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/digequsrtm-{0}-0j3bgjxly4-0j3bgjxly4.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/onyszzo4gh-{0}-cyz5k529gx-cyz5k529gx.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/v6w6awcszh-{0}-ej96puwv3k-ej96puwv3k.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/aw0v3kojd8-{0}-cj5793hgrt-cj5793hgrt.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/staticwebassets.build.json
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/staticwebassets.build.json.cache
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/staticwebassets.development.json
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/staticwebassets.build.endpoints.json
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/swae.build.ex.cache
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/WebPresDB.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/refint/WebPresDB.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/WebPresDB.pdb
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/WebPresDB.genruntimeconfig.cache
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/ref/WebPresDB.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/WebPresDB.csproj.AssemblyReference.cache
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/Microsoft.Bcl.Cryptography.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/Microsoft.Data.SqlClient.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/Microsoft.Data.SqlClient.Extensions.Abstractions.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/Microsoft.Data.SqlClient.Internal.Logging.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/Microsoft.IdentityModel.Logging.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/Microsoft.IdentityModel.Protocols.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/Microsoft.IdentityModel.Tokens.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/Microsoft.SqlServer.Server.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/System.Configuration.ConfigurationManager.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/System.IdentityModel.Tokens.Jwt.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/System.Security.Cryptography.ProtectedData.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/cs/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/de/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/es/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/fr/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/it/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/ja/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/ko/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/pl/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/pt-BR/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/ru/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/tr/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/zh-Hans/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/zh-Hant/Microsoft.Data.SqlClient.resources.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/runtimes/unix/lib/net9.0/Microsoft.Data.SqlClient.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/runtimes/win/lib/net9.0/Microsoft.Data.SqlClient.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/bin/Debug/net10.0/runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/i2yf7heyd2-{0}-8osk15y62p-8osk15y62p.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/s43g9buja9-{0}-8osk15y62p-8osk15y62p.gz
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/WebPresDB.csproj.Up2Date
+/Users/jameer/Documents/CEDAC/WebPresDB/obj/Debug/net10.0/compressed/ozl42gu0ms-{0}-uo5oeqas8e-uo5oeqas8e.gz

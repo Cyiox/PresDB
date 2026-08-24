@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject IPropertyService PropertyService // Replace with your service or HttpClient
+@rendermode InteractiveServer
 
 <PageTitle>Home - WebPresDB</PageTitle>
 
@@ -22,13 +22,13 @@
                     <div class="row g-2">
                         <div class="col-sm-6">
                             <label class="form-label" for="project_city">City</label>
-                            <input class="form-control" type="text" id="project_city" @bind="projectCity"
-                                   @bind:event="oninput" />
+                            <input class="form-control" type="text" id="project_city" value="@projectCity"
+                                   @oninput="OnCityInput" />
                         </div>
                         <div class="col-sm-6">
                             <label class="form-label" for="property_id">Project ID</label>
-                            <input class="form-control" type="text" id="property_id" @bind="propertyId"
-                                   @bind:event="oninput" />
+                            <input class="form-control" type="text" id="property_id" value="@propertyId"
+                                   @oninput="OnPropertyIdInput" />
                         </div>
                     </div>
 
@@ -49,14 +49,10 @@
             {
                 <p class="text-muted">Searching...</p>
             }
-            else if (searchResults.Any())
-            {
-                <!-- Render search results natively -->
-                <SearchResultsList Properties="searchResults" />
-            }
             else if (hasSearched)
             {
-                <p class="text-muted">No properties found matching your criteria.</p>
+                <SearchResultsList @key="searchVersion" SearchTerm="@searchTerm" City="@projectCity"
+                                   PropertyId="@propertyId" />
             }
         </div>
     </div>
@@ -70,14 +66,30 @@
     private bool isLoading = false;
     private bool hasSearched = false;
 
-    private List<PropertyModel> searchResults = new();
+    private int searchVersion;
     private CancellationTokenSource? debounceCts;
 
     // Replicating HTMX's delay:400ms debounce behavior for typing
     private async Task OnSearchTermInput(ChangeEventArgs e)
     {
         searchTerm = e.Value?.ToString() ?? "";
+        await DebounceSearchAsync();
+    }
 
+    private async Task OnCityInput(ChangeEventArgs e)
+    {
+        projectCity = e.Value?.ToString() ?? "";
+        await DebounceSearchAsync();
+    }
+
+    private async Task OnPropertyIdInput(ChangeEventArgs e)
+    {
+        propertyId = e.Value?.ToString() ?? "";
+        await DebounceSearchAsync();
+    }
+
+    private async Task DebounceSearchAsync()
+    {
         debounceCts?.Cancel();
         debounceCts = new CancellationTokenSource();
 
@@ -105,9 +117,8 @@
 
         try
         {
-            // Call C# data service directly instead of returning raw HTML snippets
-            searchResults = await PropertyService.SearchPropertiesAsync(searchTerm, projectCity, propertyId);
             hasSearched = true;
+            searchVersion++;
         }
         finally
         {
