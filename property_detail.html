@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+
+{% block title %}{{ property.property_name|default:"Property Inspector" }} - WebPresDB{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+
+  <!-- Back Button -->
+  <div class="mb-3">
+    <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-sm">&larr; Back to Search</a>
+  </div>
+
+  <!-- Executive Summary Header Card -->
+  <div class="card shadow-sm border-dark mb-4">
+    <div class="card-body">
+      <div class="row align-items-start">
+        <div class="col-lg-5">
+          <h1 class="display-6 fw-bold mb-1">
+            {{ property.property_name|default:"Unnamed Property" }}
+          </h1>
+          <p class="fs-5 text-dark mb-2">
+            {{ property.street|default:"Address N/A" }} | {% if property.city %}{{ property.city }}, {% endif %}{{ property.state|default:"" }} {{ property.zip_code|default:"" }}
+          </p>
+          <p class="text-muted small mb-0">
+            Property ID: <strong>#{{ property.exp_use_property_id }}</strong> |
+            HUD ID: <strong>{{ property.hud_id|default:"N/A" }}</strong>
+          </p>
+        </div>
+
+        <div class="col-lg-4 border-start">
+          <div class="d-flex flex-wrap gap-3 align-items-center mb-2">
+            <div>
+              <strong>Section 8:</strong>
+              <span class="badge {% if contracts %}bg-dark{% else %}bg-light text-dark border{% endif %}">
+                {% if contracts %}YES{% else %}NO{% endif %}
+              </span>
+            </div>
+            <div>
+              <strong>Status:</strong>
+              <span class="badge bg-secondary">{{ property.units_at_risk_status|default:"N/A" }}</span>
+            </div>
+          </div>
+          <p class="small text-muted mb-0">
+            <strong>Preservation Status:</strong> {{ property.extra_data|get_item:"Risk Status Category/Comment"|default:"Active Restriction" }}
+          </p>
+        </div>
+
+        <div class="col-lg-3 text-lg-end border-start">
+          <small class="text-muted d-block mb-1">Last Updated</small>
+          <span class="fw-bold fs-6">
+            {% if current_contract.import_datetime %}
+              {{ current_contract.import_datetime|date:"N/j/Y" }}
+            {% else %}
+              N/A
+            {% endif %}
+          </span>
+        </div>
+      </div>
+
+      <!-- Summary Table -->
+      <div class="table-responsive mt-3">
+        <table class="table table-sm table-bordered text-center align-middle mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Total Units</th>
+              <th>Units Restricted</th>
+              <th>Units Lost</th>
+              <th>Units at Risk</th>
+              <th>Primary Restriction</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="table-light fs-6">
+              <td><strong>{{ property.extra_data|get_item:"property_total_unit_count"|default:"--" }}</strong></td>
+              <td>{{ property.extra_data|get_item:"Units_Assisted"|default:"--" }}</td>
+              <td>{{ property.extra_data|get_item:"units_lost_c"|default:"0" }}</td>
+              <td>{{ property.extra_data|get_item:"units_at_risk_num"|default:"0" }}</td>
+              <td>{{ property.extra_data|get_item:"primary_financing_type"|default:"LIHTC / Section 8" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {% if property.extra_data|get_item:"property_comments" %}
+      <div class="mt-3 p-2 bg-light border rounded small">
+        <strong>Comments:</strong> {{ property.extra_data|get_item:"property_comments" }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Tabs Container -->
+  <div class="card shadow-sm border-secondary">
+    <div class="card-header bg-light pt-2 pb-0">
+      <ul class="nav nav-tabs card-header-tabs" id="propertyTabs" role="tablist">
+        <li class="nav-item">
+          <button class="nav-link active fw-semibold" id="hud-prop-tab" data-bs-toggle="tab" data-bs-target="#hud-prop" type="button">HUD Property</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link fw-semibold" id="hud-contract-tab" data-bs-toggle="tab" data-bs-target="#hud-contract" type="button">HUD Contract</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link fw-semibold" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button">At Risk / Comments</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link fw-semibold" id="raw-json-tab" data-bs-toggle="tab" data-bs-target="#raw-json" type="button">All Attributes (JSON)</button>
+        </li>
+      </ul>
+    </div>
+
+    <div id="tab-content-container">
+      {% include 'partials/_property_tab_content.html' %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% if query_performed %}
+<div class="card shadow-sm mt-4">
+  <div
+    class="card-header bg-light d-flex justify-content-between align-items-center"
+  >
+    <h4 class="h6 mb-0">Search Results</h4>
+    <span class="badge bg-primary">{{ total_count }} Properties Found</span>
+  </div>
+  <div class="table-responsive" style="max-height: 400px; overflow-y: auto">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-dark sticky-top">
+        <tr>
+          <th>ID</th>
+          <th>Property Name</th>
+          <th>City / State</th>
+          <th>HUD ID</th>
+          <th>Contracts</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for property in properties %}
+        <tr
+          style="cursor: pointer"
+          onclick="window.location='{% url 'property_detail' property.exp_use_property_id %}'"
+        >
+          <td><strong>#{{ property.exp_use_property_id }}</strong></td>
+          <td class="fw-semibold">{{ property.property_name|default:"--" }}</td>
+          <td>{{ property.city }}, {{ property.state }}</td>
+          <td><code>{{ property.hud_id|default:"N/A" }}</code></td>
+          <td>
+            <span class="badge bg-success"
+              >{{ property.sec8_contracts.count }} Linked</span
+            >
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center py-4 text-muted">
+            No properties found matching your search.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}

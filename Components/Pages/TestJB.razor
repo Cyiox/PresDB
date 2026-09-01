@@ -1,0 +1,69 @@
+@page "/testjb"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using WebPresDB.Models
+
+@inject PreservationTestContext db
+
+<PageTitle>TestJB</PageTitle>
+
+<div class="panel-shell">
+    <h3 class="mb-3">TestJB</h3>
+
+
+
+    <button class="btn btn-primary mb-3" @onclick="LoadProperties" disabled="@isLoading" type="button">
+        @if (isLoading)
+        {
+            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+        }
+        Load W properties
+    </button>
+
+    @if (isLoading)
+    {
+        <p>Loading...</p>
+    }
+    else if (properties.Any())
+    {
+        <div class="list-group">
+            @foreach (var property in properties)
+            {
+                <div class="list-group-item">
+                    <strong>@property.PropertyName</strong>
+                    <div class="text-muted">ID: @property.PropertyId | City: @property.City</div>
+                </div>
+            }
+        </div>
+    }
+    else if (hasSearched)
+    {
+        <p>No properties found where PropertyName starts with "w".</p>
+    }
+</div>
+
+@code {
+    private bool isLoading;
+    private bool hasSearched;
+    private List<Property> properties = new();
+
+    private async Task LoadProperties()
+    {
+        isLoading = true;
+        hasSearched = false;
+
+        try
+        {
+            properties = await db.Properties
+                .Where(p => p.PropertyName != null &&
+                            p.PropertyName.StartsWith("w"))
+                .ToListAsync();
+
+            hasSearched = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
