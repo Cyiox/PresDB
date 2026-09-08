@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using WebPresDB.Components;
+using WebPresDB.Models;
 using WebPresDB.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddDbContext<PreservationTestContext>(options =>
+    options.UseSqlServer(GetDatabaseConnectionString(builder.Configuration)));
+
 builder.Services.AddScoped<IPropertyService, PropertyService>();
 
 var app = builder.Build();
@@ -27,3 +32,10 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
+static string GetDatabaseConnectionString(IConfiguration configuration)
+{
+    var connectionName = configuration["Database:ConnectionStringName"] ?? "Default";
+    return configuration.GetConnectionString(connectionName)
+        ?? throw new InvalidOperationException($"ConnectionStrings:{connectionName} is not configured.");
+}

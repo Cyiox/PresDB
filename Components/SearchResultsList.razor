@@ -1,28 +1,79 @@
 @using WebPresDB.Models
+@inject IPropertyService PropertyService
+@inject ILogger<SearchResultsList> Logger
 
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>Project ID</th>
-            <th>Name</th>
-            <th>City</th>
-            <th>Address</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var property in Properties)
-        {
-            <tr>
-                <td>@property.PropertyId</td>
-                <td>@property.Name</td>
-                <td>@property.City</td>
-                <td>@property.Address</td>
-            </tr>
-        }
-    </tbody>
-</table>
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p class="text-danger">Unable to load properties: @errorMessage</p>
+}
+else if (hasLoaded && totalCount == 0)
+{
+    <p class="text-muted">No properties found matching your criteria.</p>
+}
+else
+{
+    <p class="text-muted">@(hasLoaded ? $"{totalCount} properties found. Scroll to load more." : "Loading properties...")
+    </p>
+    <div class="property-results" role="table" aria-label="Property search results">
+        <div class="property-result-row property-result-header" role="row">
+            <span role="columnheader">Property ID</span>
+            <span role="columnheader">HUD ID</span>
+            <span role="columnheader">Name</span>
+            <span role="columnheader">City</span>
+            <span role="columnheader">Address</span>
+            <span role="columnheader">Units</span>
+        </div>
+        <Virtualize ItemsProvider="LoadPropertiesAsync" ItemSize="48">
+            <ItemContent Context="property">
+                <a class="property-result-row property-result-link" role="row" href="property/@property.PropertyId">
+                    <span role="cell">@property.PropertyId</span>
+                    <span role="cell">@property.HudId</span>
+                    <span role="cell">@property.Name</span>
+                    <span role="cell">@property.City, @property.State @property.Zip</span>
+                    <span role="cell">@property.Address</span>
+                    <span role="cell">@property.TotalUnits</span>
+                </a>
+            </ItemContent>
+            <Placeholder>
+                <div class="property-result-row" role="row"><span>Loading...</span></div>
+            </Placeholder>
+        </Virtualize>
+    </div>
+}
 
 @code {
-    [Parameter]
-    public List<PropertyModel> Properties { get; set; } = new();
+    [Parameter] public string SearchTerm { get; set; } = "";
+    [Parameter] public string City { get; set; } = "";
+    [Parameter] public string PropertyId { get; set; } = "";
+    [Parameter] public IReadOnlyCollection<string> HudProgramTypeGroupCodes { get; set; } = Array.Empty<string>();
+
+    private int totalCount;
+    private bool hasLoaded;
+    private string? errorMessage;
+
+    private async ValueTask<ItemsProviderResult<PropertyModel>> LoadPropertiesAsync(ItemsProviderRequest request)
+    {
+        try
+        {
+            var page = await PropertyService.SearchPropertiesAsync(
+                SearchTerm, City, PropertyId, HudProgramTypeGroupCodes,
+                request.StartIndex, request.Count, request.CancellationToken);
+            totalCount = page.TotalCount;
+            hasLoaded = true;
+            await InvokeAsync(StateHasChanged);
+            return new ItemsProviderResult<PropertyModel>(page.Items, page.TotalCount);
+        }
+        catch (OperationCanceledException) when (request.CancellationToken.IsCancellationRequested)
+        {
+            return new ItemsProviderResult<PropertyModel>(Array.Empty<PropertyModel>(), 0);
+        }
+        catch (Exception exception)
+        {
+            Logger.LogError(exception, "Virtualized property results failed to load. SearchTerm={SearchTerm}, City={City}, PropertyId={PropertyId}, Offset={Offset}, Count={Count}", SearchTerm, City, PropertyId, request.StartIndex,
+request.Count);
+            errorMessage = exception.Message;
+            hasLoaded = true;
+            return new ItemsProviderResult<PropertyModel>(Array.Empty<PropertyModel>(), 0);
+        }
+    }
 }
