@@ -138,7 +138,7 @@ public class PropertyService : IPropertyService
             ORDER BY ImportDateTime DESC;
             """;
 
-             const string archiveSql = """
+        const string archiveSql = """
                  SELECT TOP (5) ImportDateTime, HUD_ID AS HudId, project AS Project, company AS Company,
                      n_total AS TotalUnits, li_units AS LihtcUnits, li_unitr AS LowIncomeUnits,
                      yr_alloc AS AllocationYear, yr_pis AS PlacedInServiceYear, credit AS CreditType,
@@ -279,12 +279,18 @@ public class PropertyService : IPropertyService
         {
             result.LihtcRecords.Add(new LihtcDetailsModel
             {
-                ImportDateTime = ReadNullableDate(reader, "ImportDateTime"), HudId = ReadString(reader, "HudId"),
-                Project = ReadString(reader, "Project"), Company = ReadString(reader, "Company"),
-                TotalUnits = ReadNullableInt(reader, "TotalUnits"), LihtcUnits = ReadNullableInt(reader, "LihtcUnits"),
-                LowIncomeUnits = ReadNullableInt(reader, "LowIncomeUnits"), AllocationYear = ReadNullableInt(reader, "AllocationYear"),
-                PlacedInServiceYear = ReadNullableInt(reader, "PlacedInServiceYear"), CreditType = ReadNullableInt(reader, "CreditType"),
-                BondFinancing = ReadNullableInt(reader, "BondFinancing"), RentAssistance = ReadNullableInt(reader, "RentAssistance")
+                ImportDateTime = ReadNullableDate(reader, "ImportDateTime"),
+                HudId = ReadString(reader, "HudId"),
+                Project = ReadString(reader, "Project"),
+                Company = ReadString(reader, "Company"),
+                TotalUnits = ReadNullableInt(reader, "TotalUnits"),
+                LihtcUnits = ReadNullableInt(reader, "LihtcUnits"),
+                LowIncomeUnits = ReadNullableInt(reader, "LowIncomeUnits"),
+                AllocationYear = ReadNullableInt(reader, "AllocationYear"),
+                PlacedInServiceYear = ReadNullableInt(reader, "PlacedInServiceYear"),
+                CreditType = ReadNullableInt(reader, "CreditType"),
+                BondFinancing = ReadNullableInt(reader, "BondFinancing"),
+                RentAssistance = ReadNullableInt(reader, "RentAssistance")
             });
         }
 
@@ -293,11 +299,16 @@ public class PropertyService : IPropertyService
         {
             result.DhcdRecords.Add(new DhcdDetailsModel
             {
-                ImportDateTime = ReadNullableDate(reader, "ImportDateTime"), ProjectId = ReadString(reader, "ProjectId"),
-                ProjectName = ReadString(reader, "ProjectName"), BorrowerSponsor = ReadString(reader, "BorrowerSponsor"),
-                AffordableUnits = ReadNullableInt(reader, "AffordableUnits"), TotalUnits = ReadNullableInt(reader, "TotalUnits"),
-                NinePercentAwarded = ReadNullableDecimal(reader, "NinePctAwarded"), FourPercentAwarded = ReadNullableDecimal(reader, "FourPctAwarded"),
-                StateLihtcAwarded = ReadNullableDecimal(reader, "StateLihtcAwarded"), AcquisitionPisDate = ReadNullableDate(reader, "AcquisitionCreditPisDate"),
+                ImportDateTime = ReadNullableDate(reader, "ImportDateTime"),
+                ProjectId = ReadString(reader, "ProjectId"),
+                ProjectName = ReadString(reader, "ProjectName"),
+                BorrowerSponsor = ReadString(reader, "BorrowerSponsor"),
+                AffordableUnits = ReadNullableInt(reader, "AffordableUnits"),
+                TotalUnits = ReadNullableInt(reader, "TotalUnits"),
+                NinePercentAwarded = ReadNullableDecimal(reader, "NinePctAwarded"),
+                FourPercentAwarded = ReadNullableDecimal(reader, "FourPctAwarded"),
+                StateLihtcAwarded = ReadNullableDecimal(reader, "StateLihtcAwarded"),
+                AcquisitionPisDate = ReadNullableDate(reader, "AcquisitionCreditPisDate"),
                 RehabPisDate = ReadNullableDate(reader, "RehabCreditPisDate")
             });
         }
@@ -312,9 +323,12 @@ public class PropertyService : IPropertyService
         {
             result.UsdaRecords.Add(new UsdaDetailsModel
             {
-                ImportDateTime = ReadNullableDate(reader, "ImportDateTime"), ProjectId = ReadString(reader, "ProjectId"),
-                ProjectName = ReadString(reader, "ProjectName"), ProjectSize = ReadNullableInt(reader, "ProjectSize"),
-                RentalAssistanceUnits = ReadNullableInt(reader, "RentalAssistanceUnits"), TaxCreditExpires = ReadNullableDate(reader, "TaxCreditExpires"),
+                ImportDateTime = ReadNullableDate(reader, "ImportDateTime"),
+                ProjectId = ReadString(reader, "ProjectId"),
+                ProjectName = ReadString(reader, "ProjectName"),
+                ProjectSize = ReadNullableInt(reader, "ProjectSize"),
+                RentalAssistanceUnits = ReadNullableInt(reader, "RentalAssistanceUnits"),
+                TaxCreditExpires = ReadNullableDate(reader, "TaxCreditExpires"),
                 RestrictiveClauseExpires = ReadNullableDate(reader, "RestrictiveClauseExpires")
             });
         }
@@ -324,10 +338,15 @@ public class PropertyService : IPropertyService
         {
             result.MhpRecords.Add(new MhpDetailsModel
             {
-                ImportDateTime = ReadNullableDate(reader, "ImportDateTime"), MhpId = ReadString(reader, "MhpId"),
-                ProjectName = ReadString(reader, "ProjectName"), LoanAmount = ReadNullableDouble(reader, "LoanAmount"),
-                Status = ReadString(reader, "Status"), ClosingDate = ReadNullableDate(reader, "ClosingDate"),
-                AffordableUnits = ReadNullableInt(reader, "AffordableUnits"), TotalUnits = ReadNullableInt(reader, "TotalUnits"), Stage = ReadString(reader, "Stage")
+                ImportDateTime = ReadNullableDate(reader, "ImportDateTime"),
+                MhpId = ReadString(reader, "MhpId"),
+                ProjectName = ReadString(reader, "ProjectName"),
+                LoanAmount = ReadNullableDouble(reader, "LoanAmount"),
+                Status = ReadString(reader, "Status"),
+                ClosingDate = ReadNullableDate(reader, "ClosingDate"),
+                AffordableUnits = ReadNullableInt(reader, "AffordableUnits"),
+                TotalUnits = ReadNullableInt(reader, "TotalUnits"),
+                Stage = ReadString(reader, "Stage")
             });
         }
 
@@ -336,10 +355,14 @@ public class PropertyService : IPropertyService
         {
             result.FoaRecords.Add(new FoaDetailsModel
             {
-                ImportDateTime = ReadNullableDate(reader, "ImportDateTime"), ProjectId = ReadString(reader, "ProjectId"),
-                HudProjectNumber = ReadString(reader, "HudProjectNumber"), ProjectName = ReadString(reader, "ProjectName"),
-                TotalUnits = ReadNullableInt(reader, "TotalUnits"), LihtcUnits = ReadNullableInt(reader, "LihtcUnits"),
-                Section8Units = ReadNullableInt(reader, "Section8Units"), PrincipalProgram = ReadString(reader, "PrincipalProgram"),
+                ImportDateTime = ReadNullableDate(reader, "ImportDateTime"),
+                ProjectId = ReadString(reader, "ProjectId"),
+                HudProjectNumber = ReadString(reader, "HudProjectNumber"),
+                ProjectName = ReadString(reader, "ProjectName"),
+                TotalUnits = ReadNullableInt(reader, "TotalUnits"),
+                LihtcUnits = ReadNullableInt(reader, "LihtcUnits"),
+                Section8Units = ReadNullableInt(reader, "Section8Units"),
+                PrincipalProgram = ReadString(reader, "PrincipalProgram"),
                 MortgageInsurance = ReadString(reader, "MortgageInsurance")
             });
         }
@@ -353,12 +376,16 @@ public class PropertyService : IPropertyService
         {
             records.Add(new MortgageDetailsModel
             {
-                ImportDateTime = ReadNullableDate(reader, "ImportDateTime"), HudProjectNumber = ReadString(reader, "HudProjectNumber"),
-                PremiseId = ReadString(reader, "PremiseId"), Units = ReadNullableInt(reader, "Units"),
+                ImportDateTime = ReadNullableDate(reader, "ImportDateTime"),
+                HudProjectNumber = ReadString(reader, "HudProjectNumber"),
+                PremiseId = ReadString(reader, "PremiseId"),
+                Units = ReadNullableInt(reader, "Units"),
                 InitialEndorsementDate = ReadNullableDate(reader, "InitialEndorsementDate"),
                 FinalEndorsementDate = terminated ? null : ReadNullableDate(reader, "FinalEndorsementDate"),
-                OriginalMortgageAmount = ReadNullableDouble(reader, "OriginalMortgageAmount"), MaturityDate = ReadNullableDate(reader, "MaturityDate"),
-                SectionOfActCode = ReadString(reader, "SectionOfActCode"), Status = terminated ? ReadString(reader, "Status") : string.Empty,
+                OriginalMortgageAmount = ReadNullableDouble(reader, "OriginalMortgageAmount"),
+                MaturityDate = ReadNullableDate(reader, "MaturityDate"),
+                SectionOfActCode = ReadString(reader, "SectionOfActCode"),
+                Status = terminated ? ReadString(reader, "Status") : string.Empty,
                 TermDate = terminated ? ReadNullableDate(reader, "TermDate") : null
             });
         }
