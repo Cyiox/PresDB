@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddDbContext<PreservationTestContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+    options.UseSqlServer(GetDatabaseConnectionString(builder.Configuration)));
 
 builder.Services.AddScoped<IPropertyService, PropertyService>();
 
@@ -32,3 +32,10 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
+static string GetDatabaseConnectionString(IConfiguration configuration)
+{
+    var connectionName = configuration["Database:ConnectionStringName"] ?? "Default";
+    return configuration.GetConnectionString(connectionName)
+        ?? throw new InvalidOperationException($"ConnectionStrings:{connectionName} is not configured.");
+}

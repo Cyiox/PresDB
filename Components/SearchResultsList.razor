@@ -45,6 +45,7 @@ else
     [Parameter] public string SearchTerm { get; set; } = "";
     [Parameter] public string City { get; set; } = "";
     [Parameter] public string PropertyId { get; set; } = "";
+    [Parameter] public IReadOnlyCollection<string> HudProgramTypeGroupCodes { get; set; } = Array.Empty<string>();
 
     private int totalCount;
     private bool hasLoaded;
@@ -55,7 +56,8 @@ else
         try
         {
             var page = await PropertyService.SearchPropertiesAsync(
-                SearchTerm, City, PropertyId, request.StartIndex, request.Count, request.CancellationToken);
+                SearchTerm, City, PropertyId, HudProgramTypeGroupCodes,
+                request.StartIndex, request.Count, request.CancellationToken);
             totalCount = page.TotalCount;
             hasLoaded = true;
             await InvokeAsync(StateHasChanged);

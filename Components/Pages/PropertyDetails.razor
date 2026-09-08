@@ -60,9 +60,16 @@ else
     </section>
 
     <section class="property-detail-tabs border rounded">
-        <div class="property-detail-tab-buttons border-bottom p-2">
+        <div class="property-detail-tab-buttons border-bottom p-2 d-flex flex-wrap gap-2">
             <button class="btn @(activeTab == "property" ? "btn-primary" : "btn-outline-secondary")" @onclick='() => SetTab("property")'>HUD Property</button>
             <button class="btn @(activeTab == "contract" ? "btn-primary" : "btn-outline-secondary")" @onclick='() => SetTab("contract")'>HUD Contract</button>
+            <button class="btn @(activeTab == "lihtc" ? "btn-primary" : "btn-outline-secondary")" @onclick='() => SetTab("lihtc")'>LIHTC</button>
+            <button class="btn @(activeTab == "dhcd" ? "btn-primary" : "btn-outline-secondary")" @onclick='() => SetTab("dhcd")'>DHCD</button>
+            <button class="btn @(activeTab == "hud-act" ? "btn-primary" : "btn-outline-secondary")" @onclick='() => SetTab("hud-act")'>HUD Act Mortgage</button>
+            <button class="btn @(activeTab == "hud-terminated" ? "btn-primary" : "btn-outline-secondary")" @onclick='() => SetTab("hud-terminated")'>HUD Terminated</button>
+            <button class="btn @(activeTab == "usda" ? "btn-primary" : "btn-outline-secondary")" @onclick='() => SetTab("usda")'>USDA</button>
+            <button class="btn @(activeTab == "mhp" ? "btn-primary" : "btn-outline-secondary")" @onclick='() => SetTab("mhp")'>MHP</button>
+            <button class="btn @(activeTab == "foa" ? "btn-primary" : "btn-outline-secondary")" @onclick='() => SetTab("foa")'>MassHousing FOA</button>
             <button class="btn @(activeTab == "comments" ? "btn-primary" : "btn-outline-secondary")" @onclick='() => SetTab("comments")'>At Risk / Comments</button>
         </div>
 
@@ -102,9 +109,133 @@ else
                     </div>
                 }
             }
+            else if (activeTab == "lihtc")
+            {
+                <h2 class="h5">LIHTC records</h2>
+                @if (details.LihtcRecords.Count == 0)
+                {
+                    <p class="text-muted mb-0">No LIHTC records linked to this property.</p>
+                }
+                else
+                {
+                    <div class="table-responsive"><table class="table table-sm table-striped align-middle">
+                        <thead><tr><th>Project</th><th>HUD ID</th><th>Total units</th><th>LIHTC units</th><th>Low-income units</th><th>Allocation / PIS</th><th>Credits</th><th>Imported</th></tr></thead>
+                        <tbody>@foreach (var record in details.LihtcRecords)
+                        {<tr><td>@record.Project</td><td>@record.HudId</td><td>@(record.TotalUnits?.ToString() ?? "N/A")</td><td>@(record.LihtcUnits?.ToString() ?? "N/A")</td><td>@(record.LowIncomeUnits?.ToString() ?? "N/A")</td><td>@(record.AllocationYear?.ToString() ?? "N/A") / @(record.PlacedInServiceYear?.ToString() ?? "N/A")</td><td>@(record.CreditType?.ToString() ?? "N/A")@(record.BondFinancing == 1 ? " / Bond" : "")</td><td>@FormatDate(record.ImportDateTime)</td></tr>}</tbody>
+                    </table></div>
+                }
+            }
+            else if (activeTab == "dhcd")
+            {
+                <h2 class="h5">DHCD financing</h2>
+                @if (details.DhcdRecords.Count == 0)
+                {
+                    <p class="text-muted mb-0">No DHCD records linked to this property.</p>
+                }
+                else
+                {
+                    <div class="table-responsive"><table class="table table-sm table-striped align-middle">
+                        <thead><tr><th>Project</th><th>Sponsor</th><th>Affordable / total units</th><th>9% award</th><th>4% award</th><th>State LIHTC</th><th>Acquisition PIS</th><th>Rehab PIS</th></tr></thead>
+                        <tbody>@foreach (var record in details.DhcdRecords)
+                        {<tr><td>@record.ProjectName <span class="text-muted small">@record.ProjectId</span></td><td>@record.BorrowerSponsor</td><td>@(record.AffordableUnits?.ToString() ?? "N/A") / @(record.TotalUnits?.ToString() ?? "N/A")</td><td>@FormatMoney(record.NinePercentAwarded)</td><td>@FormatMoney(record.FourPercentAwarded)</td><td>@FormatMoney(record.StateLihtcAwarded)</td><td>@FormatDate(record.AcquisitionPisDate)</td><td>@FormatDate(record.RehabPisDate)</td></tr>}</tbody>
+                    </table></div>
+                }
+            }
+            else if (activeTab == "hud-act" || activeTab == "hud-terminated")
+            {
+                var mortgageRecords = activeTab == "hud-act" ? details.HudActMortgages : details.HudTerminatedMortgages;
+                <h2 class="h5">@(activeTab == "hud-act" ? "HUD Act mortgages" : "HUD terminated mortgages")</h2>
+                @if (mortgageRecords.Count == 0)
+                {
+                    <p class="text-muted mb-0">No mortgage records linked to this property.</p>
+                }
+                else
+                {
+                    <div class="table-responsive"><table class="table table-sm table-striped align-middle">
+                        <thead><tr><th>HUD project</th><th>Premise</th><th>Section of Act</th><th>Units</th><th>Original mortgage</th><th>Initial endorsement</th><th>Maturity</th><th>@(activeTab == "hud-act" ? "Final endorsement" : "Status / term date")</th></tr></thead>
+                        <tbody>@foreach (var record in mortgageRecords)
+                        {<tr><td>@record.HudProjectNumber</td><td>@record.PremiseId</td><td>@record.SectionOfActCode</td><td>@(record.Units?.ToString() ?? "N/A")</td><td>@FormatMoney(record.OriginalMortgageAmount)</td><td>@FormatDate(record.InitialEndorsementDate)</td><td>@FormatDate(record.MaturityDate)</td><td>@(activeTab == "hud-act" ? FormatDate(record.FinalEndorsementDate) : $"{record.Status} / {FormatDate(record.TermDate)}")</td></tr>}</tbody>
+                    </table></div>
+                }
+            }
+            else if (activeTab == "usda")
+            {
+                <h2 class="h5">USDA financing</h2>
+                @if (details.UsdaRecords.Count == 0)
+                {
+                    <p class="text-muted mb-0">No USDA records linked to this property.</p>
+                }
+                else
+                {
+                    <div class="table-responsive"><table class="table table-sm table-striped align-middle">
+                        <thead><tr><th>Project</th><th>Project ID</th><th>Project size</th><th>Rental assistance units</th><th>Tax credit expires</th><th>Restriction expires</th></tr></thead>
+                        <tbody>@foreach (var record in details.UsdaRecords)
+                        {<tr><td>@record.ProjectName</td><td>@record.ProjectId</td><td>@(record.ProjectSize?.ToString() ?? "N/A")</td><td>@(record.RentalAssistanceUnits?.ToString() ?? "N/A")</td><td>@FormatDate(record.TaxCreditExpires)</td><td>@FormatDate(record.RestrictiveClauseExpires)</td></tr>}</tbody>
+                    </table></div>
+                }
+            }
+            else if (activeTab == "mhp")
+            {
+                <h2 class="h5">MHP financing</h2>
+                @if (details.MhpRecords.Count == 0)
+                {
+                    <p class="text-muted mb-0">No MHP records linked to this property.</p>
+                }
+                else
+                {
+                    <div class="table-responsive"><table class="table table-sm table-striped align-middle">
+                        <thead><tr><th>Project</th><th>MHP ID</th><th>Status / stage</th><th>Loan amount</th><th>Affordable / total units</th><th>Closing date</th></tr></thead>
+                        <tbody>@foreach (var record in details.MhpRecords)
+                        {<tr><td>@record.ProjectName</td><td>@record.MhpId</td><td>@record.Status / @record.Stage</td><td>@FormatMoney(record.LoanAmount)</td><td>@(record.AffordableUnits?.ToString() ?? "N/A") / @(record.TotalUnits?.ToString() ?? "N/A")</td><td>@FormatDate(record.ClosingDate)</td></tr>}</tbody>
+                    </table></div>
+                }
+            }
+            else if (activeTab == "foa")
+            {
+                <h2 class="h5">MassHousing FOA</h2>
+                @if (details.FoaRecords.Count == 0)
+                {
+                    <p class="text-muted mb-0">No MassHousing FOA records linked to this property.</p>
+                }
+                else
+                {
+                    <div class="table-responsive"><table class="table table-sm table-striped align-middle">
+                        <thead><tr><th>Project</th><th>HUD project</th><th>Total units</th><th>LIHTC units</th><th>Section 8 units</th><th>Principal program</th><th>Mortgage insurance</th></tr></thead>
+                        <tbody>@foreach (var record in details.FoaRecords)
+                        {<tr><td>@record.ProjectName <span class="text-muted small">@record.ProjectId</span></td><td>@record.HudProjectNumber</td><td>@(record.TotalUnits?.ToString() ?? "N/A")</td><td>@(record.LihtcUnits?.ToString() ?? "N/A")</td><td>@(record.Section8Units?.ToString() ?? "N/A")</td><td>@record.PrincipalProgram</td><td>@record.MortgageInsurance</td></tr>}</tbody>
+                    </table></div>
+                }
+            }
             else
             {
-                <textarea class="form-control" rows="6" readonly>@(string.IsNullOrWhiteSpace(details.Comments) ? "No comments available." : details.Comments)</textarea>
+                <label class="form-label" for="property-comment">Comments</label>
+                <textarea id="property-comment" class="form-control" rows="6" @bind="editedComment"></textarea>
+                <div class="d-flex align-items-center gap-3 mt-3">
+                    <button class="btn btn-primary" @onclick="SaveCommentAsync" disabled="@isSavingComment">
+                        @(isSavingComment ? "Saving..." : "Save comment")
+                    </button>
+                    @if (details.CommentHistory.Count > 0)
+                    {
+                        <span class="text-muted small">Last edited @FormatDateTime(details.CommentHistory[0].EditedAt) by @details.CommentHistory[0].EditedBy</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(commentSaveMessage))
+                    {
+                        <span class="text-success small">@commentSaveMessage</span>
+                    }
+                </div>
+                @if (details.CommentHistory.Count > 0)
+                {
+                    <h3 class="h6 mt-4">Comment history</h3>
+                    <div class="list-group">
+                        @foreach (var historyEntry in details.CommentHistory)
+                        {
+                            <div class="list-group-item">
+                                <div class="small text-muted">@FormatDateTime(historyEntry.EditedAt) by @historyEntry.EditedBy</div>
+                                <div class="mt-1">@historyEntry.CommentText</div>
+                            </div>
+                        }
+                    </div>
+                }
             }
         </div>
     </section>
@@ -118,6 +249,9 @@ else
     private string? errorMessage;
     private bool isLoading = true;
     private int selectedContractIndex;
+    private string editedComment = string.Empty;
+    private bool isSavingComment;
+    private string? commentSaveMessage;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -127,6 +261,7 @@ else
         try
         {
             details = await PropertyService.GetPropertyDetailsAsync(PropertyId);
+            editedComment = details?.Comments ?? string.Empty;
         }
         catch (Exception exception)
         {
@@ -143,4 +278,36 @@ else
     private void SetTab(string tab) => activeTab = tab;
 
     private static string FormatDate(DateTime? value) => value?.ToString("yyyy-MM-dd") ?? "N/A";
+
+    private static string FormatMoney(decimal? value) => value?.ToString("C0") ?? "N/A";
+
+    private static string FormatMoney(double? value) => value?.ToString("C0") ?? "N/A";
+
+    private static string FormatDateTime(DateTime value) => $"{value.ToLocalTime():yyyy-MM-dd HH:mm}";
+
+    private async Task SaveCommentAsync()
+    {
+        if (details is null)
+        {
+            return;
+        }
+
+        isSavingComment = true;
+        commentSaveMessage = null;
+        try
+        {
+            await PropertyService.SaveCommentAsync(PropertyId, editedComment);
+            details = await PropertyService.GetPropertyDetailsAsync(PropertyId);
+            editedComment = details?.Comments ?? string.Empty;
+            commentSaveMessage = "Comment saved.";
+        }
+        catch (Exception exception)
+        {
+            errorMessage = exception.Message;
+        }
+        finally
+        {
+            isSavingComment = false;
+        }
+    }
 }
