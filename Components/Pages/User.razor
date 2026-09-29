@@ -1,0 +1,111 @@
+@page "/User"
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+
+@attribute [Authorize]
+@layout MainLayout
+@inject IAuthorizationService AuthorizationService
+<p>
+    Last updated 8-24-2026
+</p>
+<h1>User Profile & Identity</h1>
+
+<AuthorizeView>
+    <Authorized>
+        <p>Welcome, <strong>@(context.User.FindFirst("name")?.Value ?? context.User.Identity?.Name)</strong>!</p>
+
+        <h3>Account Details</h3>
+        <ul>
+            <li><strong>Display Name:</strong> @(context.User.FindFirst("name")?.Value ?? "N/A")</li>
+            <li><strong>Username / Email:</strong> @(context.User.FindFirst("preferred_username")?.Value ?? context.User.FindFirst(ClaimTypes.Email)?.Value ?? "N/A")</li>
+            <li><strong>User GUID (oid):</strong> @(context.User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value ?? context.User.FindFirst("oid")?.Value ?? "N/A")</li>
+        </ul>
+
+        <h3>Assigned Application Roles</h3>
+        @if (userRoles.Any())
+        {
+            <ul>
+                @foreach (var role in userRoles)
+                {
+                    <li><code>@role</code></li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p><em>No application roles returned in the current identity token.</em></p>
+        }
+
+        <h3>Active Policy Access</h3>
+        <table class="table table-bordered table-sm" style="max-width: 450px;">
+            <thead>
+                <tr>
+                    <th>Policy Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>ExpUseDB_Read</code></td>
+                    <td>
+                        @if (hasReadAccess) { <span class="text-success fw-bold">✓ Granted</span> }
+                        else { <span class="text-danger">✗ Denied</span> }
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>ExpUseDB_Edit</code></td>
+                    <td>
+                        @if (hasEditAccess) { <span class="text-success fw-bold">✓ Granted</span> }
+                        else { <span class="text-danger">✗ Denied</span> }
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>ExpUseDB_Admin</code></td>
+                    <td>
+                        @if (hasAdminAccess) { <span class="text-success fw-bold">✓ Granted</span> }
+                        else { <span class="text-danger">✗ Denied</span> }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </Authorized>
+    <NotAuthorized>
+        <p>You are not currently signed in.</p>
+        <a href="MicrosoftIdentity/Account/SignIn" class="btn btn-primary">Sign In</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    private List<string> userRoles = new();
+    private bool hasReadAccess;
+    private bool hasEditAccess;
+    private bool hasAdminAccess;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthenticationStateTask != null)
+        {
+            var authState = await AuthenticationStateTask;
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                // 1. Extract clean App Role claim strings (no GUID dictionary required)
+                userRoles = user.Claims
+                    .Where(c => c.Type == ClaimTypes.Role || c.Type == "roles")
+                    .Select(c => c.Value)
+                    .Distinct()
+                    .ToList();
+
+                // 2. Test Program.cs policies against current user claims
+                hasReadAccess = (await AuthorizationService.AuthorizeAsync(user, "ExpUseDB_Read")).Succeeded;
+                hasEditAccess = (await AuthorizationService.AuthorizeAsync(user, "ExpUseDB_Edit")).Succeeded;
+                hasAdminAccess = (await AuthorizationService.AuthorizeAsync(user, "ExpUseDB_Admin")).Succeeded;
+            }
+        }
+    }
+}
