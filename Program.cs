@@ -17,8 +17,8 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ExpUseDB_Read", policy =>
-        policy.RequireRole ("ExpUseDB_Read","ExpUseDB_Edit", "ExpUseDB_Admin"));
-        
+        policy.RequireRole("ExpUseDB_Read", "ExpUseDB_Edit", "ExpUseDB_Admin"));
+
     options.AddPolicy("ExpUseDB_Edit", policy =>
         policy.RequireRole("ExpUseDB_Edit", "ExpUseDB_Admin"));
 
@@ -37,6 +37,7 @@ builder.Services.AddDbContext<PreservationTestContext>(options =>
     options.UseSqlServer(GetDatabaseConnectionString(builder.Configuration)));
 
 builder.Services.AddScoped<IPropertyService, PropertyService>();
+builder.Services.AddScoped<IAtRiskReportService, AtRiskReportService>();
 
 var app = builder.Build();
 

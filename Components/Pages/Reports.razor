@@ -1,6 +1,125 @@
 @page "/Reports"
-@layout MainLayout
+@rendermode InteractiveServer
+@using System.Text
+@inject IAtRiskReportService ReportService
+@inject IJSRuntime JS
 
-<p>
-    Intended use to generate the forecast report from here. Also can be used a general downloading page.
-</p>
+<PageTitle>Preservation report - WebPresDB</PageTitle>
+
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+        <p class="text-uppercase text-muted small fw-semibold mb-1">Massachusetts preservation inventory</p>
+        <h1 class="h2 mb-1">Preservation status report</h1>
+        <p class="text-muted mb-0">Evaluate the Access preservation rules for a forecast date.</p>
+    </div>
+    <div class="d-flex align-items-end gap-2">
+        <div>
+            <label class="form-label small mb-1" for="forecast-date">Forecast date</label>
+            <input id="forecast-date" class="form-control" type="date" @bind="forecastDate" />
+        </div>
+        <button class="btn btn-primary" @onclick="GenerateReportAsync" disabled="@isLoading">
+            @if (isLoading)
+            {
+                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+            }
+            Generate report
+        </button>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (report is null)
+{
+    <div class="border rounded p-5 text-center text-muted">
+        <h2 class="h5 text-body">No report generated</h2>
+        <p class="mb-0">Choose a forecast date and generate the current preservation assessment.</p>
+    </div>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4">
+            <div class="border rounded p-3">
+                <div class="text-muted small">Projects evaluated</div>
+                <div class="fs-3 fw-semibold">@report.Rows.Count</div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="border rounded p-3">
+                <div class="text-muted small">Preserved</div>
+                <div class="fs-3 fw-semibold text-success">@report.Rows.Count(x => x.Status == "Preserved")</div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="border rounded p-3">
+                <div class="text-muted small">At risk</div>
+                <div class="fs-3 fw-semibold text-danger">@report.Rows.Count(x => x.Status == "At risk")</div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <p class="text-muted small mb-0">Forecast date: @report.ForecastDate.ToString("MMMM d, yyyy")</p><button
+        class="btn btn-outline-secondary btn-sm" @onclick="DownloadCsvAsync">Download CSV</button>
+    </div>
+    <div class="table-responsive border rounded">
+        <table class="table table-sm table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Property</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Rule / override</th>
+                    <th class="text-end">Units</th>
+                    <th>Preserved through</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in report.Rows)
+                {
+                    <tr><td><strong>@row.PropertyName</strong><br /><span class="text-muted small">#@row.PropertyId</span></td>
+                        <td>@row.City<br /><span class="text-muted small">@row.Street, @row.Zip</span></td>
+                        <td><span
+                            class="badge @(row.Status == "At risk" ? "text-bg-danger" : "text-bg-success")">@row.Status</span>
+                        </td>
+                        <td class="small">@row.PreservationRule</td>
+                        <td class="text-end">@(row.TotalUnits?.ToString() ?? "-")</td>
+                        <td>@(row.PreservedThroughDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private DateTime forecastDate = DateTime.Today;
+    private AtRiskReportResult? report;
+    private bool isLoading;
+    private string? errorMessage;
+
+    private async Task GenerateReportAsync()
+    {
+        isLoading = true;
+        errorMessage = null;
+        try { report = await ReportService.GenerateAsync(forecastDate); }
+        catch (Exception exception) { errorMessage = $"The report could not be generated: {exception.Message}"; }
+        finally { isLoading = false; }
+    }
+
+    private async Task DownloadCsvAsync()
+    {
+        if (report is null) return;
+        var csv = new StringBuilder("Property ID,Property Name,City,Street,Zip,Agency,Status,Rule,Total Units,Units At Risk,Preserved Through\r\n");
+        foreach (var row in report.Rows)
+            csv.AppendLine(string.Join(',', row.PropertyId, Csv(row.PropertyName), Csv(row.City), Csv(row.Street), Csv(row.Zip),
+Csv(row.Agency), Csv(row.Status), Csv(row.PreservationRule), row.TotalUnits, row.UnitsAtRisk,
+row.PreservedThroughDate?.ToString("yyyy-MM-dd")));
+        await JS.InvokeVoidAsync("downloadReportCsv", $"preservation-report-{report.ForecastDate:yyyy-MM-dd}.csv",
+csv.ToString());
+    }
+
+    private static string Csv(string? value) => $"\"{(value ?? "").Replace("\"", "\"\"")}\"";
+}
