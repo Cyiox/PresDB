@@ -27,6 +27,17 @@
                     </NavLink>
                 </li>
             </ul>
+            <AuthorizeView>
+                <Authorized>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="small text-muted">@(context.User.Identity?.Name ?? "Signed in")</span>
+                        <a class="btn btn-outline-secondary btn-sm" href="MicrosoftIdentity/Account/SignOut">Sign out</a>
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <a class="btn btn-primary btn-sm" href="MicrosoftIdentity/Account/SignIn">Sign in</a>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
     </div>
 </nav>

@@ -1,6 +1,8 @@
 @page "/property/{PropertyId:int}"
 @rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
 @using WebPresDB.Models
+@attribute [Authorize(Policy = "ExpUseDB_Read")]
 @inject IPropertyService PropertyService
 @inject NavigationManager Navigation
 
@@ -33,7 +35,7 @@ else
                 <p class="text-muted mb-0">Property ID: <strong>#@details.Property.PropertyId</strong> | HUD ID: <strong>@(details.Property.HudId?.ToString() ?? "N/A")</strong></p>
             </div>
             <div class="col-lg-4 border-start">
-                <p class="mb-2"><strong>Section 8:</strong> <span class="badge @(details.Contracts.Count > 0 ? "text-bg-dark" : "text-bg-light")">@(details.Contracts.Count > 0 ? "YES" : "NO")</span></p>
+                <p class="mb-2"><strong>Section 8:</strong> <span class="badge @(details.Contracts.Count > 0 ? "text-bg-success" : "text-bg-dark")">@(details.Contracts.Count > 0 ? "YES" : "NO")</span></p>
                 <p class="mb-0"><strong>Status:</strong> <span class="badge text-bg-secondary">@(string.IsNullOrWhiteSpace(details.Status) ? "N/A" : details.Status)</span></p>
             </div>
             <div class="col-lg-3 border-start">
