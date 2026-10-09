@@ -1,13 +1,47 @@
 # CEDAC PresDB 
 
-This repository contains the code for CEDAC's web interface for the preservation database. It will include functionality of searching, generating reports, importing and exporting information from the preservation database.
+This repository contains the code for CEDAC's web interface for the preservation database. It will include functionality for searching, generating reports, and importing and exporting information from the preservation database.
 
-## TODO
+## TODO (Updated 10-8-26)
 
-- Migrate local Access data into SQL Server Express database.
+- Migrate local Access data into a SQL Server Express database.
+
 - Prototype initial UI
-  - Currently working on: Project Search, Project Details.
+  
+  - [ ] Condensing information shared across multiple tabs into the front page.
+  - [ ] Report making expansion
+  - [ ] Experimental matching feature
+  - [ ] Interface to add/remove projects.
+  
 - Authentication for CRUD users.
+
+- Authentication for CEDAC users.
+
+- Migrating decision tree
+
+  - Original 10 rules have been completed. Need to add additional rules
+
+- Expansion to report making
+
+  - Including the ability to create custom reports with a user-friendly UI\
+
+ - Implementing restriction reason field.
+
+ - Refining comments section
+
+ - Add DHCD information export
+
+  
+
+## Completed
+
+- 1st search and property details prototype
+- User sign-in page
+- Prototype reports page
+- Comment section prototype. 
+
+
+
 
 ## Database connection
 
@@ -46,7 +80,7 @@ For the current error, `localhost,1433` is not reachable. Either replace the `De
 ## Directory Layout
 
 - Components
-  - Visual UI elements, Including accompanying CSS files
+  - Visual UI elements, including accompanying CSS files
 - Models
   - Defines the data structure of an object. For example, the PropertyModel includes the Name,City and Address for a Property. Allows us to make changes to the backend without changing the frontend.  
 - Services

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using System.Security.Claims;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using WebPresDB.Components;
@@ -7,6 +8,7 @@ using WebPresDB.Models;
 using WebPresDB.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var authenticationEnabled = builder.Configuration.GetValue("Authentication:Enabled", true);
 
 // Authentication & Authorization Services 
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
@@ -53,6 +55,23 @@ app.UseHttpsRedirection();
 
 // Auth Middleware (Must be before UseAntiforgery)
 app.UseAuthentication();
+if (!authenticationEnabled)
+{
+    app.Use(async (context, next) =>
+    {
+        var developmentIdentity = new ClaimsIdentity(
+        [
+            new Claim(ClaimTypes.Name, "Development User"),
+            new Claim(ClaimTypes.Role, "ExpUseDB_Read"),
+            new Claim(ClaimTypes.Role, "ExpUseDB_Edit"),
+            new Claim(ClaimTypes.Role, "ExpUseDB_Admin")
+        ],
+        authenticationType: "Development");
+
+        context.User = new ClaimsPrincipal(developmentIdentity);
+        await next();
+    });
+}
 app.UseAuthorization();
 
 app.UseAntiforgery();
