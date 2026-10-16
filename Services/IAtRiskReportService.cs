@@ -4,5 +4,5 @@ namespace WebPresDB.Services;
 
 public interface IAtRiskReportService
 {
-    Task<AtRiskReportResult> GenerateAsync(DateTime forecastDate, CancellationToken cancellationToken = default);
+    Task<AtRiskReportResult> GenerateAsync(DateTime forecastDate, ReportDataSnapshot snapshot = ReportDataSnapshot.MostRecent, CancellationToken cancellationToken = default);
 }

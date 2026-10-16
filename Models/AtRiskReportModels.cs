@@ -1,5 +1,11 @@
 namespace WebPresDB.Models;
 
+public enum ReportDataSnapshot
+{
+    MostRecent,
+    OldestAvailable
+}
+
 public sealed class AtRiskReportRow
 {
     public int PropertyId { get; init; }
@@ -13,6 +19,12 @@ public sealed class AtRiskReportRow
     public DateTime? PreservedThroughDate { get; init; }
     public string Status { get; init; } = "";
     public string PreservationRule { get; init; } = "";
+    public bool HasDhcdAwards { get; init; }
+    public string DhcdProjectName { get; init; } = "";
+    public decimal? DhcdStateLihtcAwarded { get; init; }
+    public decimal? DhcdNinePctAwarded { get; init; }
+    public int? DhcdAffordableUnits { get; init; }
+    public DateTime? DhcdImportDate { get; init; }
 }
 
 public sealed class AtRiskReportResult

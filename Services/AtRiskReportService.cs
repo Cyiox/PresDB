@@ -8,14 +8,15 @@ public sealed class AtRiskReportService(PreservationTestContext db, ILogger<AtRi
     private static readonly string[] RiskSharingCodes = ["YHE", "YHN"];
     private static readonly string[] PreservingMortgageCodes = ["ZPC", "ZPD", "ZPE", "ZPF", "ZPH", "ZPI"];
 
-    public async Task<AtRiskReportResult> GenerateAsync(DateTime forecastDate, CancellationToken cancellationToken = default)
+    public async Task<AtRiskReportResult> GenerateAsync(DateTime forecastDate, ReportDataSnapshot snapshot = ReportDataSnapshot.MostRecent, CancellationToken cancellationToken = default)
     {
         forecastDate = forecastDate.Date;
         var properties = await db.Properties.AsNoTracking().ToListAsync(cancellationToken);
-        var latestAging = await LatestByPropertyAsync(db.PreservedUnitsAgings.AsNoTracking().Where(x => x.PreservedThroughDate <= forecastDate), x => x.PropertyId, x => x.PreservedThroughDate, cancellationToken);
-        var latestMortgages = await LatestByPropertyAsync(db.MtgAArchives.AsNoTracking().Where(x => x.ExpUsePropertyId.HasValue), x => x.ExpUsePropertyId!.Value, x => x.ImportDateTime, cancellationToken);
-        var latestContracts = await LatestByPropertyAsync(db.MfAssistanceSec8ContractsArchives.AsNoTracking().Where(x => x.ExpUsePropertyId.HasValue), x => x.ExpUsePropertyId!.Value, x => x.ImportDateTime, cancellationToken);
-        var latestLihtc = await LatestByPropertyAsync(db.LihtcpubArchives.AsNoTracking().Where(x => x.ExpUsePropertyId.HasValue), x => x.ExpUsePropertyId!.Value, x => x.ImportDateTime, cancellationToken);
+        var latestAging = await LatestByPropertyAsync(db.PreservedUnitsAgings.AsNoTracking().Where(x => x.PreservedThroughDate <= forecastDate), x => x.PropertyId, x => x.PreservedThroughDate, snapshot, cancellationToken);
+        var latestMortgages = await LatestByPropertyAsync(db.MtgAArchives.AsNoTracking().Where(x => x.ExpUsePropertyId.HasValue), x => x.ExpUsePropertyId!.Value, x => x.ImportDateTime, snapshot, cancellationToken);
+        var latestContracts = await LatestByPropertyAsync(db.MfAssistanceSec8ContractsArchives.AsNoTracking().Where(x => x.ExpUsePropertyId.HasValue), x => x.ExpUsePropertyId!.Value, x => x.ImportDateTime, snapshot, cancellationToken);
+        var latestLihtc = await LatestByPropertyAsync(db.LihtcpubArchives.AsNoTracking().Where(x => x.ExpUsePropertyId.HasValue), x => x.ExpUsePropertyId!.Value, x => x.ImportDateTime, snapshot, cancellationToken);
+        var dhcdAwards = await LatestByPropertyAsync(db.DhcdArchives.AsNoTracking().Where(x => x.ExpUsePropertyId.HasValue), x => x.ExpUsePropertyId!.Value, x => x.ImportDateTime, snapshot, cancellationToken);
         var excludedIds = (await db.PropertiesExcludedFromAtRiskReports.AsNoTracking().Select(x => x.PropertyId).ToListAsync(cancellationToken)).ToHashSet();
 
         var rows = new List<AtRiskReportRow>(properties.Count);
@@ -26,6 +27,7 @@ public sealed class AtRiskReportService(PreservationTestContext db, ILogger<AtRi
             latestMortgages.TryGetValue(property.PropertyId, out var mortgage);
             latestContracts.TryGetValue(property.PropertyId, out var contract);
             latestLihtc.TryGetValue(property.PropertyId, out var lihtc);
+            dhcdAwards.TryGetValue(property.PropertyId, out var dhcd);
             var rule = FindPreservationRule(property, aging, mortgage, contract, lihtc, forecastDate);
             var overrideAtRisk = property.OtherAtRiskDate is not null && property.OtherAtRiskDate.Value.Date < forecastDate;
             var isAtRisk = overrideAtRisk || rule is null;
@@ -44,6 +46,12 @@ public sealed class AtRiskReportService(PreservationTestContext db, ILogger<AtRi
                 PreservationRule = isAtRisk && overrideAtRisk
                     ? $"At risk date override ({property.OtherAtRiskDate:yyyy-MM-dd})"
                     : isAtRisk ? "No preservation rule matched" : rule!
+                , HasDhcdAwards = dhcd is not null
+                , DhcdProjectName = dhcd?.ProjectName ?? ""
+                , DhcdStateLihtcAwarded = dhcd?.StateLihtcAwarded
+                , DhcdNinePctAwarded = dhcd?.NinePctAwarded
+                , DhcdAffordableUnits = dhcd?.NumberOfAffordableUnits
+                , DhcdImportDate = dhcd?.ImportDateTime
             });
         }
 
@@ -70,9 +78,13 @@ public sealed class AtRiskReportService(PreservationTestContext db, ILogger<AtRi
         return null;
     }
 
-    private static async Task<Dictionary<int, T>> LatestByPropertyAsync<T>(IQueryable<T> source, Func<T, int> keySelector, Func<T, DateTime?> dateSelector, CancellationToken cancellationToken)
+    private static async Task<Dictionary<int, T>> LatestByPropertyAsync<T>(IQueryable<T> source, Func<T, int> keySelector, Func<T, DateTime?> dateSelector, ReportDataSnapshot snapshot, CancellationToken cancellationToken)
     {
         var values = await source.ToListAsync(cancellationToken);
-        return values.GroupBy(keySelector).ToDictionary(group => group.Key, group => group.OrderByDescending(dateSelector).First());
+        return values.GroupBy(keySelector).ToDictionary(
+            group => group.Key,
+            group => (snapshot == ReportDataSnapshot.MostRecent
+                ? group.OrderByDescending(value => dateSelector(value) ?? DateTime.MinValue)
+                : group.OrderBy(value => dateSelector(value) ?? DateTime.MaxValue)).First());
     }
 }

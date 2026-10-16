@@ -4,28 +4,107 @@
 @inject IAtRiskReportService ReportService
 @inject IJSRuntime JS
 
-<PageTitle>Preservation report - WebPresDB</PageTitle>
+<PageTitle>Reports - WebPresDB</PageTitle>
 
-<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
-    <div>
-        <p class="text-uppercase text-muted small fw-semibold mb-1">Massachusetts preservation inventory</p>
-        <h1 class="h2 mb-1">Preservation status report</h1>
-        <p class="text-muted mb-0">Evaluate the Access preservation rules for a forecast date.</p>
-    </div>
-    <div class="d-flex align-items-end gap-2">
-        <div>
-            <label class="form-label small mb-1" for="forecast-date">Forecast date</label>
+<div class="mb-4">
+    <p class="text-uppercase text-muted small fw-semibold mb-1">Massachusetts preservation inventory</p>
+    <h1 class="h2 mb-1">Reports</h1>
+    <p class="text-muted mb-0">Start with the preservation assessment or build a spreadsheet from the fields you need.</p>
+</div>
+
+<div class="btn-group mb-4" role="group" aria-label="Report type">
+    <button class="btn @(reportType == "preservation" ? "btn-primary" : "btn-outline-primary")" @onclick='() => SetReportType("preservation")'>
+        Preservation report
+    </button>
+    <button class="btn @(reportType == "custom" ? "btn-primary" : "btn-outline-primary")" @onclick='() => SetReportType("custom")'>
+        Custom report
+    </button>
+</div>
+
+<div class="border rounded p-3 mb-4 bg-body-tertiary">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label small fw-semibold" for="forecast-date">Forecast date</label>
             <input id="forecast-date" class="form-control" type="date" @bind="forecastDate" />
         </div>
-        <button class="btn btn-primary" @onclick="GenerateReportAsync" disabled="@isLoading">
-            @if (isLoading)
-            {
-                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
-            }
-            Generate report
-        </button>
+        <div class="col-md-5">
+            <label class="form-label small fw-semibold" for="data-snapshot">Data snapshot</label>
+            <select id="data-snapshot" class="form-select" @bind="snapshot">
+                <option value="@ReportDataSnapshot.MostRecent">Most recent import</option>
+                <option value="@ReportDataSnapshot.OldestAvailable">Oldest available import</option>
+            </select>
+            <div class="form-text">Archive-backed fields use the selected import for each property.</div>
+        </div>
+        @if (reportType == "custom")
+        {
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold" for="source-filter">Include projects with</label>
+                <select id="source-filter" class="form-select" @bind="sourceFilter">
+                    <option value="All">Any available data</option>
+                    <option value="DhcdAwards">DHCD awards records</option>
+                </select>
+            </div>
+        }
+        <div class="col-md-3">
+            <button class="btn btn-primary w-100" @onclick="GenerateReportAsync" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                }
+                Generate report
+            </button>
+        </div>
     </div>
 </div>
+
+@if (reportType == "custom")
+{
+    <div class="row g-4 mb-4">
+        <div class="col-lg-7">
+            <div class="border rounded p-3 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <h2 class="h5 mb-1">Choose columns</h2>
+                        <p class="text-muted small mb-0">Property ID is always included as the first column.</p>
+                    </div>
+                    <button class="btn btn-sm btn-link" @onclick="SelectAllFields">Select all</button>
+                </div>
+                <input class="form-control mb-3" type="search" placeholder="Search fields, e.g. state_lihtc"
+                       aria-label="Search report fields" @bind="fieldSearch" @bind:event="oninput" />
+                <div class="small text-muted mb-2">Select a field to add it to the report.</div>
+                <div class="row row-cols-1 row-cols-md-2 g-2">
+                    @foreach (var field in FilteredFields)
+                    {
+                        <div class="col">
+                            <button type="button" class="btn w-100 text-start border rounded p-2 @(selectedFields.Contains(field.Key) ? "btn-primary" : "btn-outline-secondary")"
+                                    @onclick="() => ToggleField(field.Key)">
+                                @(selectedFields.Contains(field.Key) ? "✓ " : "+ ")@field.Label
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="border rounded p-3 h-100">
+                <h2 class="h5 mb-1">Column order</h2>
+                <p class="text-muted small">Use the arrows to arrange the spreadsheet columns.</p>
+                @foreach (var fieldKey in selectedFields)
+                {
+                    <div class="d-flex align-items-center justify-content-between border rounded p-2 mb-2">
+                        <span class="small">@FieldLabel(fieldKey)</span>
+                        <span>
+                            <button class="btn btn-sm btn-outline-secondary me-1" title="Move up"
+                                    @onclick="() => MoveField(fieldKey, -1)" disabled="@(selectedFields.IndexOf(fieldKey) == 0)">↑</button>
+                            <button class="btn btn-sm btn-outline-secondary" title="Move down"
+                                    @onclick="() => MoveField(fieldKey, 1)" disabled="@(selectedFields.IndexOf(fieldKey) == selectedFields.Count - 1)">↓</button>
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
 
 @if (!string.IsNullOrWhiteSpace(errorMessage))
 {
@@ -35,58 +114,57 @@ else if (report is null)
 {
     <div class="border rounded p-5 text-center text-muted">
         <h2 class="h5 text-body">No report generated</h2>
-        <p class="mb-0">Choose a forecast date and generate the current preservation assessment.</p>
+        <p class="mb-0">Choose a report type and options above, then generate the report.</p>
     </div>
 }
 else
 {
     <div class="row g-3 mb-4">
-        <div class="col-sm-4">
-            <div class="border rounded p-3">
-                <div class="text-muted small">Projects evaluated</div>
-                <div class="fs-3 fw-semibold">@report.Rows.Count</div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="border rounded p-3">
-                <div class="text-muted small">Preserved</div>
-                <div class="fs-3 fw-semibold text-success">@report.Rows.Count(x => x.Status == "Preserved")</div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="border rounded p-3">
-                <div class="text-muted small">At risk</div>
-                <div class="fs-3 fw-semibold text-danger">@report.Rows.Count(x => x.Status == "At risk")</div>
-            </div>
-        </div>
+        <div class="col-sm-4"><div class="border rounded p-3"><div class="text-muted small">Projects evaluated</div><div class="fs-3 fw-semibold">@report.Rows.Count</div></div></div>
+        <div class="col-sm-4"><div class="border rounded p-3"><div class="text-muted small">Preserved</div><div class="fs-3 fw-semibold text-success">@report.Rows.Count(x => x.Status == "Preserved")</div></div></div>
+        <div class="col-sm-4"><div class="border rounded p-3"><div class="text-muted small">At risk</div><div class="fs-3 fw-semibold text-danger">@report.Rows.Count(x => x.Status == "At risk")</div></div></div>
     </div>
     <div class="d-flex justify-content-between align-items-center mb-2">
-        <p class="text-muted small mb-0">Forecast date: @report.ForecastDate.ToString("MMMM d, yyyy")</p><button
-        class="btn btn-outline-secondary btn-sm" @onclick="DownloadCsvAsync">Download CSV</button>
+        <p class="text-muted small mb-0">@SnapshotDescription · Forecast date: @report.ForecastDate.ToString("MMMM d, yyyy")</p>
+        <button class="btn btn-outline-secondary btn-sm" @onclick="DownloadCsvAsync">Download CSV</button>
     </div>
     <div class="table-responsive border rounded">
         <table class="table table-sm table-hover align-middle mb-0">
             <thead class="table-dark">
                 <tr>
-                    <th>Property</th>
-                    <th>Location</th>
-                    <th>Status</th>
-                    <th>Rule / override</th>
-                    <th class="text-end">Units</th>
-                    <th>Preserved through</th>
+                    @if (reportType == "custom")
+                    {
+                        @foreach (var field in selectedFields)
+                        {
+                            <th class="@(field == "PropertyId" ? "" : "text-nowrap")">@FieldLabel(field)</th>
+                        }
+                    }
+                    else
+                    {
+                        <th>Property</th><th>Location</th><th>Status</th><th>Rule / override</th><th class="text-end">Units</th><th>Preserved through</th>
+                    }
                 </tr>
             </thead>
             <tbody>
                 @foreach (var row in report.Rows)
                 {
-                    <tr><td><strong>@row.PropertyName</strong><br /><span class="text-muted small">#@row.PropertyId</span></td>
-                        <td>@row.City<br /><span class="text-muted small">@row.Street, @row.Zip</span></td>
-                        <td><span
-                            class="badge @(row.Status == "At risk" ? "text-bg-danger" : "text-bg-success")">@row.Status</span>
-                        </td>
-                        <td class="small">@row.PreservationRule</td>
-                        <td class="text-end">@(row.TotalUnits?.ToString() ?? "-")</td>
-                        <td>@(row.PreservedThroughDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                    <tr>
+                        @if (reportType == "custom")
+                        {
+                            @foreach (var field in selectedFields)
+                            {
+                                <td>@FieldValue(row, field)</td>
+                            }
+                        }
+                        else
+                        {
+                            <td><strong>@row.PropertyName</strong><br /><span class="text-muted small">#@row.PropertyId</span></td>
+                            <td>@row.City<br /><span class="text-muted small">@row.Street, @row.Zip</span></td>
+                            <td><span class="badge @(row.Status == "At risk" ? "text-bg-danger" : "text-bg-success")">@row.Status</span></td>
+                            <td class="small">@row.PreservationRule</td>
+                            <td class="text-end">@(row.TotalUnits?.ToString() ?? "-")</td>
+                            <td>@(row.PreservedThroughDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                        }
                     </tr>
                 }
             </tbody>
@@ -95,31 +173,105 @@ else
 }
 
 @code {
+    private readonly List<ReportField> availableFields =
+    [
+        new("PropertyName", "Property name", "Properties"),
+        new("City", "City", "Properties"),
+        new("Street", "Street", "Properties"),
+        new("Zip", "ZIP code", "Properties"),
+        new("Agency", "Agency", "Properties"),
+        new("Status", "Preservation status", "Preservation"),
+        new("PreservationRule", "Preservation rule", "Preservation"),
+        new("TotalUnits", "Total units", "Preservation"),
+        new("UnitsAtRisk", "Units at risk", "Preservation"),
+        new("PreservedThroughDate", "Preserved through", "Preservation"),
+        new("DhcdProjectName", "DHCD project name", "DHCD awards"),
+        new("DhcdStateLihtcAwarded", "State LIHTC awarded", "DHCD awards"),
+        new("DhcdNinePctAwarded", "9% LIHTC awarded", "DHCD awards"),
+        new("DhcdAffordableUnits", "DHCD affordable units", "DHCD awards"),
+        new("DhcdImportDate", "DHCD import date", "DHCD awards")
+    ];
+    private List<string> selectedFields = ["PropertyId", "PropertyName", "City", "Status", "TotalUnits"];
     private DateTime forecastDate = DateTime.Today;
+    private ReportDataSnapshot snapshot = ReportDataSnapshot.MostRecent;
     private AtRiskReportResult? report;
+    private string reportType = "preservation";
+    private string sourceFilter = "All";
+    private string fieldSearch = "";
     private bool isLoading;
     private string? errorMessage;
+
+    private string SnapshotDescription => snapshot == ReportDataSnapshot.MostRecent ? "Most recent import" : "Oldest available import";
+    private IEnumerable<ReportField> FilteredFields => availableFields.Where(reportField =>
+        (sourceFilter == "All" || reportField.Source == (sourceFilter == "DhcdAwards" ? "DHCD awards" : sourceFilter)) &&
+        (string.IsNullOrWhiteSpace(fieldSearch) ||
+         reportField.Label.Contains(fieldSearch, StringComparison.OrdinalIgnoreCase) ||
+         reportField.Key.Contains(fieldSearch, StringComparison.OrdinalIgnoreCase)));
+
+    private void SetReportType(string type) => reportType = type;
 
     private async Task GenerateReportAsync()
     {
         isLoading = true;
         errorMessage = null;
-        try { report = await ReportService.GenerateAsync(forecastDate); }
+        try
+        {
+            report = await ReportService.GenerateAsync(forecastDate, snapshot);
+            if (sourceFilter == "DhcdAwards")
+                report = new AtRiskReportResult { ForecastDate = report.ForecastDate, Rows = report.Rows.Where(row => row.HasDhcdAwards).ToArray() };
+        }
         catch (Exception exception) { errorMessage = $"The report could not be generated: {exception.Message}"; }
         finally { isLoading = false; }
     }
 
+    private void ToggleField(string field)
+    {
+        if (!selectedFields.Remove(field)) selectedFields.Add(field);
+    }
+
+    private void SelectAllFields() => selectedFields = ["PropertyId", .. availableFields.Select(x => x.Key)];
+
+    private void MoveField(string field, int direction)
+    {
+        var index = selectedFields.IndexOf(field);
+        var newIndex = index + direction;
+        if (index < 0 || newIndex < 0 || newIndex >= selectedFields.Count) return;
+        (selectedFields[index], selectedFields[newIndex]) = (selectedFields[newIndex], selectedFields[index]);
+    }
+
+    private string FieldLabel(string key) => key == "PropertyId" ? "Property ID" : availableFields.First(x => x.Key == key).Label;
+
+    private static string FieldValue(AtRiskReportRow row, string key) => key switch
+    {
+        "PropertyId" => row.PropertyId.ToString(),
+        "PropertyName" => row.PropertyName,
+        "City" => row.City,
+        "Street" => row.Street,
+        "Zip" => row.Zip,
+        "Agency" => row.Agency,
+        "Status" => row.Status,
+        "PreservationRule" => row.PreservationRule,
+        "TotalUnits" => row.TotalUnits?.ToString() ?? "",
+        "UnitsAtRisk" => row.UnitsAtRisk?.ToString() ?? "",
+        "PreservedThroughDate" => row.PreservedThroughDate?.ToString("yyyy-MM-dd") ?? "",
+        "DhcdProjectName" => row.DhcdProjectName,
+        "DhcdStateLihtcAwarded" => row.DhcdStateLihtcAwarded?.ToString() ?? "",
+        "DhcdNinePctAwarded" => row.DhcdNinePctAwarded?.ToString() ?? "",
+        "DhcdAffordableUnits" => row.DhcdAffordableUnits?.ToString() ?? "",
+        "DhcdImportDate" => row.DhcdImportDate?.ToString("yyyy-MM-dd") ?? "",
+        _ => ""
+    };
+
     private async Task DownloadCsvAsync()
     {
         if (report is null) return;
-        var csv = new StringBuilder("Property ID,Property Name,City,Street,Zip,Agency,Status,Rule,Total Units,Units At Risk,Preserved Through\r\n");
+        var fields = reportType == "custom" ? selectedFields : ["PropertyId", "PropertyName", "City", "Street", "Zip", "Agency", "Status", "PreservationRule", "TotalUnits", "UnitsAtRisk", "PreservedThroughDate"];
+        var csv = new StringBuilder(string.Join(',', fields.Select(field => Csv(FieldLabel(field)))) + "\r\n");
         foreach (var row in report.Rows)
-            csv.AppendLine(string.Join(',', row.PropertyId, Csv(row.PropertyName), Csv(row.City), Csv(row.Street), Csv(row.Zip),
-Csv(row.Agency), Csv(row.Status), Csv(row.PreservationRule), row.TotalUnits, row.UnitsAtRisk,
-row.PreservedThroughDate?.ToString("yyyy-MM-dd")));
-        await JS.InvokeVoidAsync("downloadReportCsv", $"preservation-report-{report.ForecastDate:yyyy-MM-dd}.csv",
-csv.ToString());
+            csv.AppendLine(string.Join(',', fields.Select(field => Csv(FieldValue(row, field)))));
+        await JS.InvokeVoidAsync("downloadReportCsv", $"{(reportType == "custom" ? "custom" : "preservation")}-report-{report.ForecastDate:yyyy-MM-dd}.csv", csv.ToString());
     }
 
     private static string Csv(string? value) => $"\"{(value ?? "").Replace("\"", "\"\"")}\"";
+    private sealed record ReportField(string Key, string Label, string Source);
 }
