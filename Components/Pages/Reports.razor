@@ -69,11 +69,18 @@
                     </div>
                     <button class="btn btn-sm btn-link" @onclick="SelectAllFields">Select all</button>
                 </div>
-                <input class="form-control mb-3" type="search" placeholder="Search fields, e.g. state_lihtc"
+                <input class="form-control mb-3" type="search" list="report-field-suggestions"
+                       placeholder="Search fields, e.g. state_lihtc" autocomplete="off"
                        aria-label="Search report fields" @bind="fieldSearch" @bind:event="oninput" />
+                <datalist id="report-field-suggestions">
+                    @foreach (var field in FilteredFields.Take(25))
+                    {
+                        <option value="@field.SearchText">@field.Label</option>
+                    }
+                </datalist>
                 <div class="small text-muted mb-2">Select a field to add it to the report.</div>
                 <div class="row row-cols-1 row-cols-md-2 g-2">
-                    @foreach (var field in FilteredFields)
+                    @foreach (var field in FilteredFields.Take(100))
                     {
                         <div class="col">
                             <button type="button" class="btn w-100 text-start border rounded p-2 @(selectedFields.Contains(field.Key) ? "btn-primary" : "btn-outline-secondary")"
@@ -173,8 +180,12 @@ else
 }
 
 @code {
-    private readonly List<ReportField> availableFields =
-    [
+    private readonly IReadOnlyList<ReportField> availableFields = BuildFieldCatalog();
+
+    private static IReadOnlyList<ReportField> BuildFieldCatalog()
+    {
+        var fields = new List<ReportField>
+        {
         new("PropertyName", "Property name", "Properties"),
         new("City", "City", "Properties"),
         new("Street", "Street", "Properties"),
@@ -190,7 +201,34 @@ else
         new("DhcdNinePctAwarded", "9% LIHTC awarded", "DHCD awards"),
         new("DhcdAffordableUnits", "DHCD affordable units", "DHCD awards"),
         new("DhcdImportDate", "DHCD import date", "DHCD awards")
-    ];
+        };
+
+        var knownKeys = fields.Select(field => field.Key).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var entityTypes = typeof(Property).Assembly.GetTypes()
+            .Where(type => type.IsClass && type.Namespace == "WebPresDB.Models")
+            .OrderBy(type => type.Name);
+
+        foreach (var entityType in entityTypes)
+        {
+            var source = entityType == typeof(DhcdArchive)
+                ? "DHCD awards"
+                : entityType.Name.EndsWith("Archive", StringComparison.OrdinalIgnoreCase)
+                ? entityType.Name[..^"Archive".Length] + " archive"
+                : entityType.Name;
+            foreach (var property in entityType.GetProperties().Where(property =>
+                         property.PropertyType.IsValueType || property.PropertyType == typeof(string)))
+            {
+                var key = $"{entityType.Name}.{property.Name}";
+                if (knownKeys.Contains(key)) continue;
+                fields.Add(new ReportField(key, $"{source}: {ToDisplayName(property.Name)}", source));
+            }
+        }
+
+        return fields
+            .OrderBy(field => field.Source)
+            .ThenBy(field => field.Label)
+            .ToArray();
+    }
     private List<string> selectedFields = ["PropertyId", "PropertyName", "City", "Status", "TotalUnits"];
     private DateTime forecastDate = DateTime.Today;
     private ReportDataSnapshot snapshot = ReportDataSnapshot.MostRecent;
@@ -206,7 +244,8 @@ else
         (sourceFilter == "All" || reportField.Source == (sourceFilter == "DhcdAwards" ? "DHCD awards" : sourceFilter)) &&
         (string.IsNullOrWhiteSpace(fieldSearch) ||
          reportField.Label.Contains(fieldSearch, StringComparison.OrdinalIgnoreCase) ||
-         reportField.Key.Contains(fieldSearch, StringComparison.OrdinalIgnoreCase)));
+         reportField.Key.Contains(fieldSearch, StringComparison.OrdinalIgnoreCase) ||
+         reportField.SearchText.Contains(fieldSearch, StringComparison.OrdinalIgnoreCase)));
 
     private void SetReportType(string type) => reportType = type;
 
@@ -229,7 +268,7 @@ else
         if (!selectedFields.Remove(field)) selectedFields.Add(field);
     }
 
-    private void SelectAllFields() => selectedFields = ["PropertyId", .. availableFields.Select(x => x.Key)];
+    private void SelectAllFields() => selectedFields = ["PropertyId", .. FilteredFields.Select(x => x.Key)];
 
     private void MoveField(string field, int direction)
     {
@@ -239,7 +278,7 @@ else
         (selectedFields[index], selectedFields[newIndex]) = (selectedFields[newIndex], selectedFields[index]);
     }
 
-    private string FieldLabel(string key) => key == "PropertyId" ? "Property ID" : availableFields.First(x => x.Key == key).Label;
+    private string FieldLabel(string key) => key == "PropertyId" ? "Property ID" : availableFields.FirstOrDefault(x => x.Key == key)?.Label ?? key;
 
     private static string FieldValue(AtRiskReportRow row, string key) => key switch
     {
@@ -254,11 +293,11 @@ else
         "TotalUnits" => row.TotalUnits?.ToString() ?? "",
         "UnitsAtRisk" => row.UnitsAtRisk?.ToString() ?? "",
         "PreservedThroughDate" => row.PreservedThroughDate?.ToString("yyyy-MM-dd") ?? "",
-        "DhcdProjectName" => row.DhcdProjectName,
-        "DhcdStateLihtcAwarded" => row.DhcdStateLihtcAwarded?.ToString() ?? "",
-        "DhcdNinePctAwarded" => row.DhcdNinePctAwarded?.ToString() ?? "",
-        "DhcdAffordableUnits" => row.DhcdAffordableUnits?.ToString() ?? "",
-        "DhcdImportDate" => row.DhcdImportDate?.ToString("yyyy-MM-dd") ?? "",
+        "DhcdProjectName" or "DhcdArchive.ProjectName" => row.DhcdProjectName,
+        "DhcdStateLihtcAwarded" or "DhcdArchive.StateLihtcAwarded" => row.DhcdStateLihtcAwarded?.ToString() ?? "",
+        "DhcdNinePctAwarded" or "DhcdArchive.NinePctAwarded" => row.DhcdNinePctAwarded?.ToString() ?? "",
+        "DhcdAffordableUnits" or "DhcdArchive.NumberOfAffordableUnits" => row.DhcdAffordableUnits?.ToString() ?? "",
+        "DhcdImportDate" or "DhcdArchive.ImportDateTime" => row.DhcdImportDate?.ToString("yyyy-MM-dd") ?? "",
         _ => ""
     };
 
@@ -273,5 +312,10 @@ else
     }
 
     private static string Csv(string? value) => $"\"{(value ?? "").Replace("\"", "\"\"")}\"";
-    private sealed record ReportField(string Key, string Label, string Source);
+    private static string ToDisplayName(string name) => System.Text.RegularExpressions.Regex.Replace(name, "(\\B[A-Z])", " $1");
+
+    private sealed record ReportField(string Key, string Label, string Source)
+    {
+        public string SearchText => $"{Key} {Label}";
+    }
 }
