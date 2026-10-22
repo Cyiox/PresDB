@@ -8,3 +8,5 @@ PreservationTest_Batched.sql
 export_data.sql
 PreservationTest_Export.sql
 DT.txt
+publish/
+publish.zip

@@ -123,24 +123,44 @@ public class PropertyService : IPropertyService
     {
         const string propertySql = """
             SELECT PropertyID, HUDID, PropertyName, Street, City, State, Zip,
-                   property_total_unit_count, Units_Assisted, units_at_risk_num, UnitsAtRiskStatus,
-                   primary_financing_type, [Comment: Preservation Status, Type or other new Affordability Te]
-            FROM dbo.Properties
-            WHERE PropertyID = @propertyId;
+                   property_total_unit_count, Units_Assisted, s8_pba_units_override_c,
+                   orig_units_assisted_c, units_at_risk_num, s8_expiration_date_override_c,
+                   UnitsAtRiskStatus, primary_financing_type, property_category_name,
+                   hud_property_category_name, owner_organization_name, mgmt_agent_org_name,
+                   [Comment: Preservation Status, Type or other new Affordability Te]
+            FROM dbo.Properties AS property
+            OUTER APPLY
+            (
+                SELECT TOP (1)
+                       property_category_name AS hud_property_category_name,
+                       owner_organization_name,
+                       mgmt_agent_org_name
+                FROM dbo.[MF_Properties_with_Assistance_&_Sec8_Contracts_archive] AS hudProperty
+                WHERE hudProperty.ExpUsePropertyID = property.PropertyID
+                ORDER BY hudProperty.ImportDateTime DESC
+            ) AS hudProperty
+            WHERE property.PropertyID = @propertyId;
             """;
 
         const string contractSql = """
             SELECT ImportID, ImportDateTime, contract_number, tracs_effective_date,
                    tracs_overall_expiration_date, tracs_status_name,
-                   assisted_units_count, program_type_name
+                   assisted_units_count, program_type_name, program_type_group_code
             FROM dbo.[MF_Assistance_&_Sec8_Contracts_archive]
             WHERE ExpUsePropertyID = @propertyId
             ORDER BY ImportDateTime DESC;
             """;
 
+        const string agingSql = """
+            SELECT TOP (1) TotalUnits, S8_PBAUnits, OrigSubsidyUnits, UnitsAtRisk, S8_ExpDate
+            FROM dbo.PreservedUnitsAging
+            WHERE PropertyID = @propertyId
+            ORDER BY PreservedThroughDate DESC, ID DESC;
+            """;
+
         const string archiveSql = """
                  SELECT TOP (5) ImportDateTime, HUD_ID AS HudId, project AS Project, company AS Company,
-                     n_total AS TotalUnits, li_units AS LihtcUnits, li_unitr AS LowIncomeUnits,
+                          n_units AS TotalUnits, li_units AS LihtcUnits, li_unitr AS LowIncomeUnits,
                      yr_alloc AS AllocationYear, yr_pis AS PlacedInServiceYear, credit AS CreditType,
                      bond AS BondFinancing, rentassist AS RentAssistance
                  FROM dbo.LIHTCPUB_archive WHERE ExpUsePropertyID = @propertyId ORDER BY ImportDateTime DESC;
@@ -201,10 +221,29 @@ public class PropertyService : IPropertyService
             Status = ReadString(propertyReader, "UnitsAtRiskStatus"),
             PrimaryFinancingType = ReadString(propertyReader, "primary_financing_type"),
             UnitsAssisted = ReadNullableInt(propertyReader, "Units_Assisted"),
+            S8Units = ReadNullableInt(propertyReader, "s8_pba_units_override_c"),
+            OriginalSubsidyUnits = ReadNullableInt(propertyReader, "orig_units_assisted_c"),
             UnitsAtRisk = ReadNullableInt(propertyReader, "units_at_risk_num"),
+            RestrictionOverrideDate = ReadNullableDate(propertyReader, "s8_expiration_date_override_c"),
             Comments = ReadString(propertyReader, "Comment: Preservation Status, Type or other new Affordability Te")
         };
+        property.PropertyCategoryName = ReadString(propertyReader, "hud_property_category_name");
+        property.OwnerOrganizationName = ReadString(propertyReader, "owner_organization_name");
+        property.ManagementOrganizationName = ReadString(propertyReader, "mgmt_agent_org_name");
         await propertyReader.CloseAsync();
+
+        await using var agingCommand = new SqlCommand(agingSql, connection);
+        agingCommand.Parameters.Add("@propertyId", SqlDbType.Int).Value = propertyId;
+        await using var agingReader = await agingCommand.ExecuteReaderAsync(cancellationToken);
+        if (await agingReader.ReadAsync(cancellationToken))
+        {
+            property.TotalUnits ??= ReadNullableInt(agingReader, "TotalUnits");
+            details.S8Units ??= ReadNullableInt(agingReader, "S8_PBAUnits");
+            details.OriginalSubsidyUnits ??= ReadNullableInt(agingReader, "OrigSubsidyUnits");
+            details.UnitsAtRisk ??= ReadNullableInt(agingReader, "UnitsAtRisk");
+            details.RestrictionOverrideDate ??= ReadNullableDate(agingReader, "S8_ExpDate");
+        }
+        await agingReader.CloseAsync();
 
         await using var contractCommand = new SqlCommand(contractSql, connection);
         contractCommand.Parameters.Add("@propertyId", SqlDbType.Int).Value = propertyId;
@@ -221,7 +260,8 @@ public class PropertyService : IPropertyService
                 ExpirationDate = ReadNullableDate(contractReader, "tracs_overall_expiration_date"),
                 Status = ReadString(contractReader, "tracs_status_name"),
                 AssistedUnits = ReadNullableInt(contractReader, "assisted_units_count"),
-                ProgramType = ReadString(contractReader, "program_type_name")
+                ProgramType = ReadString(contractReader, "program_type_name"),
+                ProgramTypeGroupCode = ReadString(contractReader, "program_type_group_code")
             });
         }
         await contractReader.CloseAsync();
@@ -250,13 +290,16 @@ public class PropertyService : IPropertyService
             });
         }
 
-        return new PropertyDetailsModel
+        var result = new PropertyDetailsModel
         {
             Property = details.Property,
             Status = details.Status,
             PrimaryFinancingType = details.PrimaryFinancingType,
             UnitsAssisted = details.UnitsAssisted,
+            S8Units = details.S8Units,
+            OriginalSubsidyUnits = details.OriginalSubsidyUnits,
             UnitsAtRisk = details.UnitsAtRisk,
+            RestrictionOverrideDate = details.RestrictionOverrideDate,
             Comments = details.Comments,
             Contracts = contracts,
             LihtcRecords = archiveData.LihtcRecords,
@@ -268,6 +311,16 @@ public class PropertyService : IPropertyService
             FoaRecords = archiveData.FoaRecords,
             CommentHistory = commentHistory
         };
+        result.ProgramTypeGroupCode = contracts.FirstOrDefault()?.ProgramTypeGroupCode ?? string.Empty;
+        result.HudAffordableUnits = contracts.FirstOrDefault()?.AssistedUnits;
+        result.EohlcTotalUnits = archiveData.DhcdRecords.FirstOrDefault()?.TotalUnits;
+        result.EohlcAffordableUnits = archiveData.DhcdRecords.FirstOrDefault()?.AffordableUnits;
+        var lihtc = archiveData.LihtcRecords.FirstOrDefault();
+        result.LihtcTotalUnits = lihtc?.TotalUnits;
+        result.LihtcAffordableUnits = lihtc?.LihtcUnits;
+        result.LihtcPisYear = lihtc?.PlacedInServiceYear;
+        result.LihtcAllocationYear = lihtc?.AllocationYear;
+        return result;
     }
 
     private static async Task<PropertyArchiveData> ReadArchiveDataAsync(SqlCommand command, CancellationToken cancellationToken)

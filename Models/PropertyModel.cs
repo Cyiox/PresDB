@@ -10,6 +10,9 @@ public class PropertyModel
     public string State { get; set; } = string.Empty;
     public string Zip { get; set; } = string.Empty;
     public int? TotalUnits { get; set; }
+    public string PropertyCategoryName { get; set; } = string.Empty;
+    public string OwnerOrganizationName { get; set; } = string.Empty;
+    public string ManagementOrganizationName { get; set; } = string.Empty;
 }
 
 public sealed class PropertyDetailsModel
@@ -26,9 +29,20 @@ public sealed class PropertyDetailsModel
     public string Status { get; init; } = string.Empty;
     public string PrimaryFinancingType { get; init; } = string.Empty;
     public int? UnitsAssisted { get; init; }
-    public int? UnitsAtRisk { get; init; }
+    public int? UnitsAtRisk { get; set; }
     public string Comments { get; init; } = string.Empty;
     public IReadOnlyList<PropertyCommentHistoryModel> CommentHistory { get; init; } = Array.Empty<PropertyCommentHistoryModel>();
+    public int? S8Units { get; set; }
+    public int? OriginalSubsidyUnits { get; set; }
+    public DateTime? RestrictionOverrideDate { get; set; }
+    public string ProgramTypeGroupCode { get; set; } = string.Empty;
+    public int? HudAffordableUnits { get; set; }
+    public int? EohlcTotalUnits { get; set; }
+    public int? EohlcAffordableUnits { get; set; }
+    public int? LihtcTotalUnits { get; set; }
+    public int? LihtcAffordableUnits { get; set; }
+    public int? LihtcPisYear { get; set; }
+    public int? LihtcAllocationYear { get; set; }
 }
 
 public sealed class PropertyCommentHistoryModel
@@ -48,6 +62,7 @@ public sealed class PropertyContractModel
     public string Status { get; init; } = string.Empty;
     public int? AssistedUnits { get; init; }
     public string ProgramType { get; init; } = string.Empty;
+    public string ProgramTypeGroupCode { get; init; } = string.Empty;
 }
 
 public sealed class LihtcDetailsModel
@@ -56,7 +71,7 @@ public sealed class LihtcDetailsModel
     public string HudId { get; init; } = string.Empty;
     public string Project { get; init; } = string.Empty;
     public string Company { get; init; } = string.Empty;
-    public int? TotalUnits { get; init; }
+    public int? TotalUnits { get; set; }
     public int? LihtcUnits { get; init; }
     public int? LowIncomeUnits { get; init; }
     public int? AllocationYear { get; init; }
