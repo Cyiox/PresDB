@@ -60,6 +60,7 @@ public sealed class AtRiskReportService(PreservationTestContext db, ILogger<AtRi
         return result;
     }
 
+    // This function below is reponsable for determining if a property is preserved or not based on a criteria that was made to follow statutory affordablity regulations.
     private static string? FindPreservationRule(Property property, PreservedUnitsAging? aging, MtgAArchive? mortgage, MfAssistanceSec8ContractsArchive? contract, LihtcpubArchive? lihtc, DateTime forecastDate)
     {
         if (property.TitleIiVi?.Equals("VI", StringComparison.OrdinalIgnoreCase) == true && forecastDate <= new DateTime(2043, 1, 1)) return "Title VI override";
@@ -70,8 +71,13 @@ public sealed class AtRiskReportService(PreservationTestContext db, ILogger<AtRi
         if (mortgage?.SoaCategorySubCategory?.Contains("202 Elderly", StringComparison.OrdinalIgnoreCase) == true) return "HUD active mortgage SOA category is 202 Elderly";
         if (mortgage?.FinalEndorsementDate >= forecastDate.AddYears(-15)) return "HUD active mortgage final endorsement is within 15 years";
         if (contract?.TracsOverallExpirationDate >= forecastDate) return "HUD contract TRACS expiration after forecast date";
+        //Finds if "ProgramTypeGroupCode" inside of the  PRAC projects are typically preserved because they are owned by a nonprofit and serve a sensitive population, so 99% of the time they are preserved.
+        //Specfically looks if the ProgramTypeGroupCode field in the PRAC
         if (contract?.ProgramTypeGroupCode?.Contains("PRAC", StringComparison.OrdinalIgnoreCase) == true) return "HUD contract program type group code is PRAC";
+        // Since 202s must be owned by a nonprofit and deal with a sensitive population, 99% of the time they are preserved.
+        //Specifically looks if the ProgramTypeGroupCode field in the MF_Assistance_and_Sec8_Contracts_archive table. It also looks in the MF_Properties_with_Assistance_and_Sec8_Contracts_archive table to find if the property_catagory_type or property_catagory_name is 202/811
         if (contract?.ProgramTypeGroupCode?.Contains("202", StringComparison.OrdinalIgnoreCase) == true) return "HUD contract program type group code is 202";
+        // If the LIHTC yr_pis from the LIHTCPUB_archive table is less than 30 years from the forecast date, then the property must be preserved as LIHTC restrictions must last for at least 30 years by law. 
         if (lihtc?.YrPis is int yrPis && yrPis > 0 && yrPis <= 2100 && yrPis + 30 > forecastDate.Year) return $"TC year awarded {yrPis} is within 30 years of forecast date";
         if (aging?.PreservedThroughDate.Date >= forecastDate && (aging.UnitsAtRisk ?? 0) <= 0) return "Preserved-through date is on or after forecast date";
         if (property.OtherAtRiskDate?.Date >= forecastDate) return $"At risk date override: {property.OtherAtRiskDate:yyyy-MM-dd}";

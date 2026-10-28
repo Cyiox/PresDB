@@ -2,5 +2,50 @@
 @layout MainLayout
 
 <p>
-    Last updated 10-22-2026
+    Last updated 10-28-2026
+    This page also includes documentation for the decision tree functionality.
 </p>
+
+<h2>Decision Tree</h2>
+<p>The decision tree is a set of rules detailed below that are used to determine if a project is likely to maintain is
+    preservation status thorugh the set forcast date inside of the report section.
+    <a>The rules were devloped between a joint efford between Roberta Rubin, and Jameer Gomez-Santos </a>
+</p>
+
+<h3>Decision Tree Rules</h3>
+<div>
+    <ul>
+        <ul>
+            <li>LIHTC Rule: If the <strong>"LIHTC_PIS" or "LIHTC_Alloc"</strong>field from the LIHTC tab (aka
+                "LIHTCPUB_archive" table) is less than 30 years from the forecast cuttoff date, then the project will
+                marked as preserved.</li>
+                <li>If the project recvied state LIHTC funding, the decsion tree will suggest the project be preserved if
+                    the forecast date is is within 45 years of the date LIHTC was awarded due to state LIHTC funding having
+                    a 45 year minimum term. This is evulated by checking the <strong>"State LIHTC Awarded"</strong> and
+                    subsequent awarded date fields in the DHCD_Archive table (EOHLC tab).
+                </li>
+
+            </ul>
+            >
+            <li>Rule 2, PRAC & 202s: If a project is identified a section 202 or PRAC/811 project, the decision tree will
+                suggest the project be preserved. This is because 202/811 projects are required to be owned by a nonprofit
+                and serve a sensitive population, and PRAC projects are required to be preserved by HUD.</li>
+                <a>The decision tree evaluates if a project is 202 or PRAC by:</a>
+                <ui>
+                    <ol>
+                        <li>If the <strong>"Program_Type_Group_Code"</strong> field in the
+                            MF_Assistance_and_Sec8_Contracts_archive (AKA HUD Contract tab) table contains "202" or "PRAC", the
+                            project is considered a 202 or PRAC project accordingly.</li>
+                            <li>If the <strong>property_catagory_name</strong> or <strong>"property_financing_type"</strong> fields
+                                in the MF_Properties_with_Assistance_and_Sec8_Contracts_archive (AKA HUD Propert tab) contains
+                                202/811 or PRAC, the project is considered a 202 or PRAC project accordingly.</li>
+                            </ol>
+                        </ui>
+                        
+                        <li>
+                            Override Rule: If a projects <strong>"Ar Risk Date Override" is before the override date, then the decision tree will suggest that the project remains preserved </strong>
+                        </li>
+                    </ul>
+    
+                </div>
+
