@@ -269,6 +269,7 @@ public class PropertyService : IPropertyService
         await using var archiveCommand = new SqlCommand(archiveSql, connection);
         archiveCommand.Parameters.Add("@propertyId", SqlDbType.Int).Value = propertyId;
         var archiveData = await ReadArchiveDataAsync(archiveCommand, cancellationToken);
+        await ReadPbvDataAsync(connection, propertyId, archiveData.PbvRecords, cancellationToken);
 
         const string commentHistorySql = """
             SELECT EditedAt, EditedBy, CommentText
@@ -309,6 +310,7 @@ public class PropertyService : IPropertyService
             UsdaRecords = archiveData.UsdaRecords,
             MhpRecords = archiveData.MhpRecords,
             FoaRecords = archiveData.FoaRecords,
+            PbvRecords = archiveData.PbvRecords,
             CommentHistory = commentHistory
         };
         result.ProgramTypeGroupCode = contracts.FirstOrDefault()?.ProgramTypeGroupCode ?? string.Empty;
@@ -320,6 +322,10 @@ public class PropertyService : IPropertyService
         result.LihtcAffordableUnits = lihtc?.LihtcUnits;
         result.LihtcPisYear = lihtc?.PlacedInServiceYear;
         result.LihtcAllocationYear = lihtc?.AllocationYear;
+        var pbv = archiveData.PbvRecords.FirstOrDefault();
+        result.PbvTotalUnits = pbv?.TotalUnits;
+        result.PbvLatestEndDate = pbv?.LatestEndDate;
+        result.AwardedPbvTotal = pbv?.AwardedPbvTotal;
         return result;
     }
 
@@ -420,7 +426,89 @@ public class PropertyService : IPropertyService
             });
         }
 
+        await reader.NextResultAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            result.PbvRecords.Add(new PbvDetailsModel
+            {
+                Project = ReadString(reader, "Project"),
+                Address = ReadString(reader, "Address"),
+                City = ReadString(reader, "City"),
+                TotalUnits = ReadNullableInt(reader, "TotalUnits"),
+                PbvUnits = ReadNullableInt(reader, "PbvUnits"),
+                AwardedPbvTotal = ReadNullableInt(reader, "AwardedPbvTotal"),
+                LatestEndDate = ReadNullableDate(reader, "LatestEndDate"),
+                ContractNumber = ReadString(reader, "ContractNumber"),
+                Status = ReadString(reader, "Status"),
+                MatchConfidence = ReadNullableInt(reader, "MatchConfidence") ?? 0,
+                MatchMethod = ReadString(reader, "MatchMethod")
+            });
+        }
+
         return result;
+    }
+
+    private static async Task ReadPbvDataAsync(
+        SqlConnection connection,
+        int propertyId,
+        List<PbvDetailsModel> records,
+        CancellationToken cancellationToken)
+    {
+        const string schemaSql = """
+            SELECT
+                CASE WHEN OBJECT_ID(N'dbo.PBV_Matching', N'U') IS NULL THEN 0 ELSE 1 END AS TableExists,
+                CASE WHEN COL_LENGTH(N'dbo.PBV_Matching', N'PBV_TotalUnits') IS NULL THEN 0 ELSE 1 END AS HasTotalUnits,
+                CASE WHEN COL_LENGTH(N'dbo.PBV_Matching', N'PBV_Units') IS NULL THEN 0 ELSE 1 END AS HasPbvUnits,
+                CASE WHEN COL_LENGTH(N'dbo.PBV_Matching', N'Awarded_PBV_Total') IS NULL THEN 0 ELSE 1 END AS HasAwardedPbvTotal,
+                CASE WHEN COL_LENGTH(N'dbo.PBV_Matching', N'Latest_End_Date') IS NULL THEN 0 ELSE 1 END AS HasLatestEndDate
+            """;
+        await using var schemaCommand = new SqlCommand(schemaSql, connection);
+        await using var schemaReader = await schemaCommand.ExecuteReaderAsync(cancellationToken);
+        await schemaReader.ReadAsync(cancellationToken);
+        var tableExists = schemaReader.GetInt32(0) == 1;
+        var hasTotalUnits = schemaReader.GetInt32(1) == 1;
+        var hasPbvUnits = schemaReader.GetInt32(2) == 1;
+        var hasAwardedPbvTotal = schemaReader.GetInt32(3) == 1;
+        var hasLatestEndDate = schemaReader.GetInt32(4) == 1;
+        await schemaReader.CloseAsync();
+        if (!tableExists)
+            return;
+
+        static string ColumnOrNull(bool exists, string columnName) =>
+            exists ? $"[{columnName}]" : "NULL";
+
+        var sql = $"""
+            SELECT Project, PBV_Address AS Address, PBV_CityTown AS City,
+                {ColumnOrNull(hasTotalUnits, "PBV_TotalUnits")} AS TotalUnits,
+                {ColumnOrNull(hasPbvUnits, "PBV_Units")} AS PbvUnits,
+                {ColumnOrNull(hasAwardedPbvTotal, "Awarded_PBV_Total")} AS AwardedPbvTotal,
+                {ColumnOrNull(hasLatestEndDate, "Latest_End_Date")} AS LatestEndDate,
+                PBV_ContractNumber AS ContractNumber, PBV_Status AS Status,
+                Match_Confidence AS MatchConfidence, Match_Method AS MatchMethod
+            FROM dbo.PBV_Matching
+            WHERE PropertyID = @propertyId AND Match_Confidence = 100
+            ORDER BY Project;
+            """;
+        await using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add("@propertyId", SqlDbType.Int).Value = propertyId;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            records.Add(new PbvDetailsModel
+            {
+                Project = ReadString(reader, "Project"),
+                Address = ReadString(reader, "Address"),
+                City = ReadString(reader, "City"),
+                TotalUnits = ReadNullableInt(reader, "TotalUnits"),
+                PbvUnits = ReadNullableInt(reader, "PbvUnits"),
+                AwardedPbvTotal = ReadNullableInt(reader, "AwardedPbvTotal"),
+                LatestEndDate = ReadNullableDate(reader, "LatestEndDate"),
+                ContractNumber = ReadString(reader, "ContractNumber"),
+                Status = ReadString(reader, "Status"),
+                MatchConfidence = ReadNullableInt(reader, "MatchConfidence") ?? 0,
+                MatchMethod = ReadString(reader, "MatchMethod")
+            });
+        }
     }
 
     private static async Task ReadMortgagesAsync(SqlDataReader reader, List<MortgageDetailsModel> records, bool terminated, CancellationToken cancellationToken)
@@ -530,5 +618,6 @@ public class PropertyService : IPropertyService
         public List<UsdaDetailsModel> UsdaRecords { get; } = new();
         public List<MhpDetailsModel> MhpRecords { get; } = new();
         public List<FoaDetailsModel> FoaRecords { get; } = new();
+        public List<PbvDetailsModel> PbvRecords { get; } = new();
     }
 }

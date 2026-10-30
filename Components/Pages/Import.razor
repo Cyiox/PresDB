@@ -1,0 +1,207 @@
+@page "/import"
+@rendermode InteractiveServer
+@using System.Security.Claims
+@using System.Text
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Authorization
+@using WebPresDB.Models
+@attribute [Authorize(Policy = "ExpUseDB_Edit")]
+@inject IImportReviewService ImportReviewService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>Import review</PageTitle>
+
+<h1>Import review</h1>
+<p class="text-muted">Review the newest batch loaded for each data source. Rows already linked to a property are not changed.</p>
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+@if (!string.IsNullOrWhiteSpace(statusMessage))
+{
+    <div class="alert alert-success">@statusMessage</div>
+}
+
+<div class="row g-3">
+    <div class="col-12">
+        <div class="border rounded p-3">
+            <h2 class="h5">Add a new import batch</h2>
+            <p class="small text-muted mb-2">Upload a CSV whose headers match the selected archive table. The import date and property links are managed by this application.</p>
+            <div class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label" for="upload-source">Data source</label>
+                    <select id="upload-source" class="form-select" @bind="uploadSource">
+                        <option value="">Choose a source</option>
+                        @foreach (var source in sources)
+                        {
+                            <option value="@source.DataSource">@source.Title</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label" for="upload-file">CSV file</label>
+                    <InputFile id="upload-file" class="form-control" OnChange="ImportFileAsync" accept=".csv,text/csv" />
+                </div>
+                <div class="col-md-3 small text-muted">Only configured archive columns are accepted.</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="list-group">
+            @foreach (var source in sources)
+            {
+                <button class="list-group-item list-group-item-action @(selectedSource == source.DataSource ? "active" : "")"
+                        @onclick="() => SelectSourceAsync(source.DataSource)">
+                    <span class="fw-semibold">@source.Title</span>
+                    <span class="badge @(source.UnmatchedCount > 0 ? "text-bg-warning" : "text-bg-success") float-end">
+                        @source.UnmatchedCount unmatched
+                    </span>
+                    <small class="d-block">@source.LatestImportDate?.ToString("yyyy-MM-dd")</small>
+                </button>
+            }
+        </div>
+    </div>
+    <div class="col-lg-8">
+        @if (selectedSource is null)
+        {
+            <div class="alert alert-info">Choose a data source to review its latest import.</div>
+        }
+        else
+        {
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="h4 mb-0">@selectedSourceTitle</h2>
+                @if (rows.Count > 0)
+                {
+                    <a class="btn btn-outline-secondary btn-sm" download="@($"{selectedSource}-unmatched.csv")" href="@CsvHref()">Export CSV</a>
+                }
+            </div>
+            @if (rows.Count == 0)
+            {
+                <div class="alert alert-success">There are no unmatched rows in the newest import.</div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle">
+                        <thead>
+                            <tr><th>External ID</th><th>Property</th><th>Address</th><th style="min-width: 260px">Decision</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in rows)
+                            {
+                                <tr>
+                                    <td>@row.ExternalId</td>
+                                    <td>@row.PropertyName</td>
+                                    <td>@row.Street<br />@row.City, @row.State @row.Zip</td>
+                                    <td>
+                                        <div class="input-group input-group-sm mb-1">
+                                            <input class="form-control" type="number" min="1" placeholder="Existing property ID"
+                                                   @bind="row.SelectedPropertyId" />
+                                            <button class="btn btn-primary" @onclick="() => LinkAsync(row)" disabled="@(row.SelectedPropertyId is null)">Link</button>
+                                        </div>
+                                        <button class="btn btn-outline-success btn-sm me-1" @onclick="() => CreateAsync(row)">Create property</button>
+                                        <button class="btn btn-outline-secondary btn-sm" @onclick="() => IgnoreAsync(row)">Ignore</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private IReadOnlyList<ImportReviewSource> sources = [];
+    private IReadOnlyList<ImportReviewRow> rows = [];
+    private string? selectedSource;
+    private string? selectedSourceTitle;
+    private string? errorMessage;
+    private string? statusMessage;
+    private string? uploadSource;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadSourcesAsync();
+    }
+
+    private async Task ReloadSourcesAsync()
+    {
+        try { sources = await ImportReviewService.GetSourcesAsync(); }
+        catch (Exception ex) { errorMessage = ex.Message; }
+    }
+
+    private async Task SelectSourceAsync(string source)
+    {
+        selectedSource = source;
+        selectedSourceTitle = sources.First(x => x.DataSource == source).Title;
+        await ReloadRowsAsync();
+    }
+
+    private async Task ReloadRowsAsync()
+    {
+        try { rows = await ImportReviewService.GetUnmatchedAsync(selectedSource!); }
+        catch (Exception ex) { errorMessage = ex.Message; }
+    }
+
+    private async Task LinkAsync(ImportReviewRow row)
+    {
+        await RunActionAsync(() => ImportReviewService.LinkAsync(selectedSource!, row.ImportId, row.SelectedPropertyId!.Value), "Row linked.");
+    }
+
+    private async Task CreateAsync(ImportReviewRow row)
+    {
+        var user = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity?.Name ?? "Unknown user";
+        await RunActionAsync(async () => _ = await ImportReviewService.CreatePropertyAndLinkAsync(selectedSource!, row, user), "Property created and row linked.");
+    }
+
+    private async Task IgnoreAsync(ImportReviewRow row)
+    {
+        var user = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity?.Name ?? "Unknown user";
+        await RunActionAsync(() => ImportReviewService.IgnoreAsync(selectedSource!, row.ImportId, user), "Row ignored.");
+    }
+
+    private async Task RunActionAsync(Func<Task> action, string success)
+    {
+        errorMessage = null;
+        try { await action(); statusMessage = success; await ReloadRowsAsync(); await ReloadSourcesAsync(); }
+        catch (Exception ex) { errorMessage = ex.Message; }
+    }
+
+    private async Task ImportFileAsync(InputFileChangeEventArgs args)
+    {
+        errorMessage = null;
+        statusMessage = null;
+        if (string.IsNullOrWhiteSpace(uploadSource) || args.FileCount == 0)
+        {
+            errorMessage = "Choose a data source and CSV file first.";
+            return;
+        }
+
+        try
+        {
+            var user = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity?.Name ?? "Unknown user";
+            await using var stream = args.File.OpenReadStream(maxAllowedSize: 50 * 1024 * 1024);
+            var count = await ImportReviewService.ImportCsvAsync(uploadSource, stream, args.File.Name, user);
+            statusMessage = $"Imported {count} rows. Review unmatched records below.";
+            await ReloadSourcesAsync();
+            await SelectSourceAsync(uploadSource);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private string CsvHref()
+    {
+        var csv = new StringBuilder("External ID,Property,Street,City,State,Zip,Import ID\r\n");
+        foreach (var row in rows)
+            csv.AppendLine(string.Join(',', new[] { row.ExternalId, row.PropertyName, row.Street, row.City, row.State, row.Zip, row.ImportId.ToString() }.Select(CsvEscape)));
+        return $"data:text/csv;charset=utf-8,{Uri.EscapeDataString(csv.ToString())}";
+    }
+
+    private static string CsvEscape(string? value) => $"\"{(value ?? string.Empty).Replace("\"", "\"\"")}\"";
+}

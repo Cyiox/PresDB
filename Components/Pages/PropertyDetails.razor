@@ -99,6 +99,9 @@ else
                         <div class="col-md-6"><strong>LIHTC affordable units:</strong><br />@Display(details.LihtcAffordableUnits)</div>
                         <div class="col-md-6"><strong>LIHTC PIS:</strong><br />@Display(details.LihtcPisYear)</div>
                         <div class="col-md-6"><strong>LIHTC allocation:</strong><br />@Display(details.LihtcAllocationYear)</div>
+                        <div class="col-md-6"><strong>PBV total units:</strong><br />@Display(details.PbvTotalUnits)</div>
+                        <div class="col-md-6"><strong>Awarded PBV total:</strong><br />@Display(details.AwardedPbvTotal)</div>
+                        <div class="col-md-6"><strong>PBV latest HAP end:</strong><br />@FormatDate(details.PbvLatestEndDate)</div>
                     </div>
                 </div>
             </div>
@@ -125,6 +128,7 @@ else
             <button class="btn @(TabClass("usda"))" @onclick='() => SetTab("usda")'><span class="@StatusClass(details.UsdaRecords.Count > 0)">●</span> USDA</button>
             <button class="btn @(TabClass("mhp"))" @onclick='() => SetTab("mhp")'><span class="@StatusClass(details.MhpRecords.Count > 0)">●</span> MHP</button>
             <button class="btn @(TabClass("foa"))" @onclick='() => SetTab("foa")'><span class="@StatusClass(details.FoaRecords.Count > 0)">●</span> MassHousing FOA</button>
+            <button class="btn @(TabClass("pbv"))" @onclick='() => SetTab("pbv")'><span class="@StatusClass(details.PbvRecords.Count > 0)">●</span> PBV</button>
             <button class="btn @(TabClass("comments"))" @onclick='() => SetTab("comments")'><span class="@StatusClass(!string.IsNullOrWhiteSpace(details.Comments))">●</span> At Risk / Comments</button>
         </div>
 
@@ -258,6 +262,22 @@ else
                         <thead><tr><th>Project</th><th>HUD project</th><th>Total units</th><th>LIHTC units</th><th>Section 8 units</th><th>Principal program</th><th>Mortgage insurance</th></tr></thead>
                         <tbody>@foreach (var record in details.FoaRecords)
                         {<tr><td>@record.ProjectName <span class="text-muted small">@record.ProjectId</span></td><td>@record.HudProjectNumber</td><td>@(record.TotalUnits?.ToString() ?? "N/A")</td><td>@(record.LihtcUnits?.ToString() ?? "N/A")</td><td>@(record.Section8Units?.ToString() ?? "N/A")</td><td>@record.PrincipalProgram</td><td>@record.MortgageInsurance</td></tr>}</tbody>
+                    </table></div>
+                }
+            }
+            else if (activeTab == "pbv")
+            {
+                <h2 class="h5">Project-based vouchers</h2>
+                @if (details.PbvRecords.Count == 0)
+                {
+                    <p class="text-muted mb-0">No 100% confidence PBV match is linked to this property.</p>
+                }
+                else
+                {
+                    <div class="table-responsive"><table class="table table-sm table-striped align-middle">
+                        <thead><tr><th>Project</th><th>Address</th><th>City</th><th>Total units</th><th>PBV units</th><th>Awarded PBV total</th><th>Latest HAP end</th><th>Contract</th><th>Status</th></tr></thead>
+                        <tbody>@foreach (var record in details.PbvRecords)
+                        {<tr><td>@record.Project</td><td>@record.Address</td><td>@record.City</td><td>@(record.TotalUnits?.ToString() ?? "N/A")</td><td>@(record.PbvUnits?.ToString() ?? "N/A")</td><td>@(record.AwardedPbvTotal?.ToString() ?? "N/A")</td><td>@FormatDate(record.LatestEndDate)</td><td>@record.ContractNumber</td><td>@record.Status</td></tr>}</tbody>
                     </table></div>
                 }
             }

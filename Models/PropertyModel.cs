@@ -26,6 +26,7 @@ public sealed class PropertyDetailsModel
     public IReadOnlyList<UsdaDetailsModel> UsdaRecords { get; init; } = Array.Empty<UsdaDetailsModel>();
     public IReadOnlyList<MhpDetailsModel> MhpRecords { get; init; } = Array.Empty<MhpDetailsModel>();
     public IReadOnlyList<FoaDetailsModel> FoaRecords { get; init; } = Array.Empty<FoaDetailsModel>();
+    public IReadOnlyList<PbvDetailsModel> PbvRecords { get; init; } = Array.Empty<PbvDetailsModel>();
     public string Status { get; init; } = string.Empty;
     public string PrimaryFinancingType { get; init; } = string.Empty;
     public int? UnitsAssisted { get; init; }
@@ -43,6 +44,9 @@ public sealed class PropertyDetailsModel
     public int? LihtcAffordableUnits { get; set; }
     public int? LihtcPisYear { get; set; }
     public int? LihtcAllocationYear { get; set; }
+    public int? PbvTotalUnits { get; set; }
+    public DateTime? PbvLatestEndDate { get; set; }
+    public int? AwardedPbvTotal { get; set; }
 }
 
 public sealed class PropertyCommentHistoryModel
@@ -146,4 +150,19 @@ public sealed class FoaDetailsModel
     public int? Section8Units { get; init; }
     public string PrincipalProgram { get; init; } = string.Empty;
     public string MortgageInsurance { get; init; } = string.Empty;
+}
+
+public sealed class PbvDetailsModel
+{
+    public string Project { get; init; } = string.Empty;
+    public string Address { get; init; } = string.Empty;
+    public string City { get; init; } = string.Empty;
+    public int? TotalUnits { get; init; }
+    public int? PbvUnits { get; init; }
+    public int? AwardedPbvTotal { get; init; }
+    public DateTime? LatestEndDate { get; init; }
+    public string ContractNumber { get; init; } = string.Empty;
+    public string Status { get; init; } = string.Empty;
+    public int MatchConfidence { get; init; }
+    public string MatchMethod { get; init; } = string.Empty;
 }

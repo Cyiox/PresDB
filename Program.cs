@@ -40,6 +40,7 @@ builder.Services.AddDbContext<PreservationTestContext>(options =>
 
 builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddScoped<IAtRiskReportService, AtRiskReportService>();
+builder.Services.AddScoped<IImportReviewService, ImportReviewService>();
 
 var app = builder.Build();
 

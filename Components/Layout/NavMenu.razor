@@ -22,6 +22,11 @@
                     </NavLink>
                 </li>
                 <li class="nav-item">
+                    <NavLink class="nav-link" href="Import">
+                        Import
+                    </NavLink>
+                </li>
+                <li class="nav-item">
                     <NavLink class="nav-link" href="about">
                         About
                     </NavLink>
@@ -30,7 +35,7 @@
             <AuthorizeView>
                 <Authorized>
                     <div class="d-flex align-items-center gap-2">
-                        <span class="small text-muted">@(context.User.Identity?.Name ?? "Signed in")</span>
+                        <span class="small text-white">@(context.User.Identity?.Name ?? "Signed in")</span>
                         <a class="btn btn-outline-secondary btn-sm" href="MicrosoftIdentity/Account/SignOut">Sign out</a>
                     </div>
                 </Authorized>
