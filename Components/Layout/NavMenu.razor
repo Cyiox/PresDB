@@ -1,4 +1,5 @@
-﻿<nav class="navbar navbar-expand-lg navbar-dark">
+﻿@rendermode InteractiveServer
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="">
             <img src="images/removebg.png" alt="CEDAC Logo" />
@@ -16,39 +17,60 @@
                         Home
                     </NavLink>
                 </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="reports">
+                <li class="nav-item dropdown" @onclick:stopPropagation>
+                    <button class="nav-link dropdown-toggle reports-dropdown-toggle" type="button"
+                            aria-expanded="@reportsDropdownOpen" @onclick="ToggleReportsDropdown">
                         Reports
-                    </NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="Import">
-                        Import
-                    </NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="about">
-                        About
-                    </NavLink>
-                </li>
-            </ul>
-            <AuthorizeView>
-                <Authorized>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="small text-white">@(context.User.Identity?.Name ?? "Signed in")</span>
-                        <a class="btn btn-outline-secondary btn-sm" href="MicrosoftIdentity/Account/SignOut">Sign out</a>
+                    </button>
+                    @if (reportsDropdownOpen)
+                    {
+                        <ul class="dropdown-menu show">
+                            <li>
+                                <NavLink class="dropdown-item" href="reports" @onclick="CloseReportsDropdown">Create new
+                                    report</NavLink>
+                                </li>
+                                <li>
+                                    <NavLink class="dropdown-item" href="past-reports" @onclick="CloseReportsDropdown">View past
+                                        Reports</NavLink>
+                                    </li>
+                                </ul>
+                            }
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="40T">
+                                40T
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="Import">
+                                Import
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="about">
+                                About
+                            </NavLink>
+                        </li>
+                    </ul>
+                    <AuthorizeView>
+                        <Authorized>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="small text-white">@(context.User.Identity?.Name ?? "Signed in")</span>
+                                <a class="btn btn-outline-secondary btn-sm" href="MicrosoftIdentity/Account/SignOut">Sign
+                                    out</a>
+                                </div>
+                            </Authorized>
+                            <NotAuthorized>
+                                <a class="btn btn-primary btn-sm" href="MicrosoftIdentity/Account/SignIn">Sign in</a>
+                            </NotAuthorized>
+                        </AuthorizeView>
                     </div>
-                </Authorized>
-                <NotAuthorized>
-                    <a class="btn btn-primary btn-sm" href="MicrosoftIdentity/Account/SignIn">Sign in</a>
-                </NotAuthorized>
-            </AuthorizeView>
-        </div>
-    </div>
-</nav>
+                </div>
+            </nav>
 
 @code {
     private bool collapseNavMenu = true;
+    private bool reportsDropdownOpen;
 
     // Controlls if Nav menu is compressed into a hamburger menu or not.
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -57,4 +79,8 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
+    private void ToggleReportsDropdown() => reportsDropdownOpen = !reportsDropdownOpen;
+
+    private void CloseReportsDropdown() => reportsDropdownOpen = false;
 }

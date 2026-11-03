@@ -14,3 +14,19 @@
     border-radius: 6px;
     font-weight: 500;
 }
+
+.reports-dropdown-toggle {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+}
+
+.reports-dropdown-toggle:hover,
+.reports-dropdown-toggle:focus {
+    color: inherit;
+}
+
+.dropdown-menu {
+    z-index: 1050;
+}
