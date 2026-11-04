@@ -18,13 +18,13 @@
 .reports-dropdown-toggle {
     border: 0;
     background: transparent;
-    color: inherit;
+    color: rgba(255, 255, 255, 0.55);
     font: inherit;
 }
 
 .reports-dropdown-toggle:hover,
 .reports-dropdown-toggle:focus {
-    color: inherit;
+    color: rgba(255, 255, 255, 0.75);
 }
 
 .dropdown-menu {
