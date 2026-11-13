@@ -41,6 +41,8 @@ builder.Services.AddDbContext<PreservationTestContext>(options =>
 builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddScoped<IAtRiskReportService, AtRiskReportService>();
 builder.Services.AddScoped<IImportReviewService, ImportReviewService>();
+builder.Services.AddScoped<NoticeStorageService>();
+builder.Services.AddScoped<PublishedReportStorageService>();
 
 var app = builder.Build();
 
@@ -82,6 +84,47 @@ app.MapStaticAssets();
 //  Map Sign-in / Sign-out routes 
 app.MapControllers();
 
+app.MapGet("/40t-files/{folderName}/{fileName}", (string folderName, string fileName, NoticeStorageService noticeStorage) =>
+{
+    try
+    {
+        var path = noticeStorage.GetPdfPath(folderName, fileName);
+        return Results.File(path, "application/pdf", enableRangeProcessing: true);
+    }
+    catch (FileNotFoundException)
+    {
+        return Results.NotFound();
+    }
+    catch (DirectoryNotFoundException)
+    {
+        return Results.NotFound();
+    }
+    catch (InvalidOperationException)
+    {
+        return Results.BadRequest();
+    }
+}).RequireAuthorization("ExpUseDB_Read");
+
+app.MapGet("/published-report-files/{fileName}", (string fileName, PublishedReportStorageService reportStorage) =>
+{
+    try
+    {
+        var path = reportStorage.GetPdfPath(fileName);
+        return Results.File(path, "application/pdf", enableRangeProcessing: true);
+    }
+    catch (FileNotFoundException)
+    {
+        return Results.NotFound();
+    }
+    catch (DirectoryNotFoundException)
+    {
+        return Results.NotFound();
+    }
+    catch (InvalidOperationException)
+    {
+        return Results.BadRequest();
+    }
+}).RequireAuthorization("ExpUseDB_Read");
 
 
 app.MapRazorComponents<App>()

@@ -1,4 +1,132 @@
 @page "/40T"
 @layout MainLayout
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "ExpUseDB_Read")]
+@inject NoticeStorageService NoticeStorage
 
-<p>A place to access a interface specilized on 40t data.</p>
+<PageTitle>40T Notices</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1>40T Notices</h1>
+        <p class="text-muted mb-0">Browse notice folders and open their PDF documents.</p>
+    </div>
+    <a class="btn btn-outline-warning" href="40T/unmatched">View unmatched folders</a>
+</div>
+
+@if (statistics is not null)
+{
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
+        <div class="col">
+            <div class="border rounded p-3 h-100">
+                <div class="text-muted small">Total 40T notices</div>
+                <div class="fs-3 fw-semibold">@statistics.TotalNoticeCount</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="border rounded p-3 h-100">
+                <div class="text-muted small">Total projects</div>
+                <div class="fs-3 fw-semibold">@statistics.TotalProjectCount</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="border rounded p-3 h-100">
+                <div class="text-muted small">Most recent upload</div>
+                <div class="fs-3 fw-semibold">@(statistics.MostRecentUpload?.ToString("yyyy-MM-dd") ?? "N/A")</div>
+                <div class="small text-muted"></div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="border rounded p-3 h-100">
+                <div class="text-muted small">Projects found in search</div>
+                <div class="fs-3 fw-semibold">@statistics.MatchingProjectCount</div>
+                <div class="small text-muted">@(string.IsNullOrWhiteSpace(searchTerm) ? "Initial results are capped at 100" : $"Matching “{searchTerm}”")</div>
+            </div>
+        </div>
+    </div>
+}
+
+<input class="form-control mb-3" placeholder="Search folders by property ID, city, or project name..."
+       value="@searchTerm" @oninput="SearchFoldersAsync" />
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (folders is null)
+{
+    <p class="text-muted">Loading notice folders...</p>
+}
+else if (folders.Count == 0)
+{
+    <div class="alert alert-info">No matched folders were found.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Folder</th>
+                    <th>Project name</th>
+                    <th>Address</th>
+                    <th>Last updated</th>
+                </tr>
+            </thead>
+            <tbody>
+        @foreach (var item in FilteredFolders)
+        {
+            <tr>
+                <td>
+                    <a class="fw-semibold" href="@($"40T/folder/{Uri.EscapeDataString(item.FolderName)}")">
+                        @item.FolderName
+                    </a>
+                </td>
+                <td>@item.Property?.PropertyName</td>
+                <td>@item.Property?.Street, @item.Property?.City, @item.Property?.State @item.Property?.Zip</td>
+                <td>@(item.LastUpdated?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+            </tr>
+        }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private IReadOnlyList<NoticeFolder>? folders;
+    private NoticeStorageStatistics? statistics;
+    private string searchTerm = "";
+    private string? errorMessage;
+
+    private IEnumerable<NoticeFolder> FilteredFolders => folders ?? Enumerable.Empty<NoticeFolder>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFoldersAsync(null);
+    }
+
+    private async Task SearchFoldersAsync(ChangeEventArgs args)
+    {
+        await LoadFoldersAsync(args.Value?.ToString());
+    }
+
+    private async Task LoadFoldersAsync(string? term)
+    {
+        searchTerm = term?.Trim() ?? "";
+        errorMessage = null;
+        try
+        {
+            var requestedTerm = searchTerm;
+            folders = await NoticeStorage.GetFoldersAsync(
+                searchTerm,
+                matchedOnly: true,
+                maxResults: string.IsNullOrWhiteSpace(searchTerm) ? 100 : null);
+            statistics = await NoticeStorage.GetStatisticsAsync(requestedTerm);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or DirectoryNotFoundException)
+        {
+            errorMessage = exception.Message;
+        }
+    }
+}

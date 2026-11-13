@@ -85,11 +85,12 @@ else
         </div>
         <input class="form-control mb-3" type="search" list="report-field-suggestions"
                placeholder="Search fields, e.g. state_lihtc" autocomplete="off" autocorrect="off" spellcheck="false"
-               aria-label="Search report fields" @bind="fieldSearch" @bind:event="oninput" />
+               aria-label="Search report fields" @bind="fieldSearch" @bind:event="oninput"
+               @onkeydown="HandleFieldSearchKeyDown" />
         <datalist id="report-field-suggestions">
             @foreach (var field in FilteredFields.Take(25))
             {
-                <option value="@field.SearchText">@field.Label</option>
+                <option value="@field.Label" />
             }
         </datalist>
         <div class="small text-muted mb-2">Select a field to add it to the report.</div>
@@ -211,50 +212,24 @@ else
 
     private static IReadOnlyList<ReportField> BuildFieldCatalog()
     {
-        var fields = new List<ReportField>
+        return new ReportField[]
         {
-        new("PropertyName", "Properties is from: PropertyName", "Properties"),
-        new("City", "Properties is from: City", "Properties"),
-        new("Street", "Properties is from: Street", "Properties"),
-        new("Zip", "Properties is from: Zip", "Properties"),
-        new("Agency", "Properties is from: Agency", "Properties"),
-        new("Status", "Preservation is from: Status", "Preservation"),
-        new("PreservationRule", "Preservation is from: PreservationRule", "Preservation"),
-        new("TotalUnits", "Preservation is from: TotalUnits", "Preservation"),
-        new("UnitsAtRisk", "Preservation is from: UnitsAtRisk", "Preservation"),
-        new("PreservedThroughDate", "Preservation is from: PreservedThroughDate", "Preservation"),
-        new("DhcdProjectName", "DHCD awards is from: ProjectName", "DHCD awards"),
-        new("DhcdStateLihtcAwarded", "DHCD awards is from: StateLihtcAwarded", "DHCD awards"),
-        new("DhcdNinePctAwarded", "DHCD awards is from: NinePctAwarded", "DHCD awards"),
-        new("DhcdAffordableUnits", "DHCD awards is from: NumberOfAffordableUnits", "DHCD awards"),
-        new("DhcdImportDate", "DHCD awards is from: ImportDateTime", "DHCD awards")
+            new("PropertyName", "Property Name :: Properties", "Properties"),
+            new("City", "City :: Properties", "Properties"),
+            new("Street", "Street :: Properties", "Properties"),
+            new("Zip", "ZIP :: Properties", "Properties"),
+            new("Agency", "Agency :: Properties", "Properties"),
+            new("Status", "Status :: AtRisk Report", "AtRisk Report"),
+            new("PreservationRule", "Preservation Rule :: AtRisk Report", "AtRisk Report"),
+            new("TotalUnits", "Total Units :: AtRisk Report", "AtRisk Report"),
+            new("UnitsAtRisk", "Units At Risk :: AtRisk Report", "AtRisk Report"),
+            new("PreservedThroughDate", "Preserved Through Date :: AtRisk Report", "AtRisk Report"),
+            new("DhcdProjectName", "Project Name :: DHCD_Awards", "DHCD awards"),
+            new("DhcdStateLihtcAwarded", "State LIHTC Awarded :: DHCD_Awards", "DHCD awards"),
+            new("DhcdNinePctAwarded", "9% Awarded :: DHCD_Awards", "DHCD awards"),
+            new("DhcdAffordableUnits", "Affordable Units :: DHCD_Awards", "DHCD awards"),
+            new("DhcdImportDate", "Import Date :: DHCD_Awards", "DHCD awards")
         };
-
-        var knownKeys = fields.Select(field => field.Key).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var entityTypes = typeof(Property).Assembly.GetTypes()
-            .Where(type => type.IsClass && type.Namespace == "WebPresDB.Models")
-            .OrderBy(type => type.Name);
-
-        foreach (var entityType in entityTypes)
-        {
-            var source = entityType == typeof(DhcdArchive)
-                ? "DHCD awards"
-                : entityType.Name.EndsWith("Archive", StringComparison.OrdinalIgnoreCase)
-                ? entityType.Name[..^"Archive".Length] + " archive"
-                : entityType.Name;
-            foreach (var property in entityType.GetProperties().Where(property =>
-                         property.PropertyType.IsValueType || property.PropertyType == typeof(string)))
-            {
-                var key = $"{entityType.Name}.{property.Name}";
-                if (knownKeys.Contains(key)) continue;
-                fields.Add(new ReportField(key, $"{source} is from: {property.Name}", source));
-            }
-        }
-
-        return fields
-            .OrderBy(field => field.Source)
-            .ThenBy(field => field.Label)
-            .ToArray();
     }
     private List<string> selectedFields = ["PropertyId", "PropertyName", "City", "Status", "TotalUnits"];
     private DateTime forecastDate = DateTime.Today;
@@ -303,6 +278,18 @@ else
         if (!selectedFields.Remove(field)) selectedFields.Add(field);
     }
 
+    private void HandleFieldSearchKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key is not "Enter") return;
+
+        var matches = FilteredFields.ToList();
+        if (matches.Count == 1 && !selectedFields.Contains(matches[0].Key))
+        {
+            selectedFields.Add(matches[0].Key);
+            fieldSearch = "";
+        }
+    }
+
     private void SelectAllFields() => selectedFields = ["PropertyId", .. FilteredFields.Select(x => x.Key)];
 
     private void MoveField(string field, int direction)
@@ -313,7 +300,7 @@ else
         (selectedFields[index], selectedFields[newIndex]) = (selectedFields[newIndex], selectedFields[index]);
     }
 
-    private string FieldLabel(string key) => key == "PropertyId" ? "Properties is from: PropertyId" : availableFields.FirstOrDefault(x => x.Key == key)?.Label ?? key;
+    private string FieldLabel(string key) => key == "PropertyId" ? "Property ID :: Properties" : availableFields.FirstOrDefault(x => x.Key == key)?.Label ?? key;
 
     private static string FieldValue(AtRiskReportRow row, string key) => key switch
     {

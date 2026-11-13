@@ -1,0 +1,212 @@
+@page "/40T/folder/{FolderName}"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@attribute [Authorize(Policy = "ExpUseDB_Read")]
+@inject NoticeStorageService NoticeStorage
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IAuthorizationService AuthorizationService
+@inject IJSRuntime JS
+
+<PageTitle>@FolderName - 40T Notices</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <a class="btn btn-outline-secondary btn-sm mb-2" href="40T">Back to 40T folders</a>
+        <h1 class="h2 mb-0">@FolderName</h1>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (folder is null)
+{
+    <p class="text-muted">Loading folder...</p>
+}
+else
+{
+    <div class="border rounded p-3 mb-4">
+        <div class="d-flex justify-content-between flex-wrap gap-2">
+            <div>
+                <h2 class="h5 mb-1">Property link</h2>
+                @if (folder.Property is null)
+                {
+                    <span class="badge text-bg-warning">Unmatched folder</span>
+                }
+                else
+                {
+                    <a href="@($"property/{folder.Property.PropertyId}")">
+                        #@folder.Property.PropertyId - @folder.Property.PropertyName
+                    </a>
+                    <div class="small text-muted">@folder.Property.City, @folder.Property.State</div>
+                }
+            </div>
+            <div class="text-muted text-end">
+                <div>@files.Count PDF@(files.Count == 1 ? "" : "s")</div>
+                <div>Last Updated: @(folder.LastUpdated?.ToString("yyyy-MM-dd") ?? "N/A")</div>
+            </div>
+        </div>
+    </div>
+
+    <section class="border rounded p-3">
+        <h2 class="h5">Notice PDFs</h2>
+        @if (files.Count == 0)
+        {
+            <p class="text-muted">No PDFs are currently in this folder.</p>
+        }
+        else
+        {
+            <div class="table-responsive mb-4">
+                <table class="table table-sm table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>40T notice</th>
+                            <th>Type of notice</th>
+                            <th>Notice date</th>
+                            <th>Date uploaded</th>
+                            <th>Size</th>
+                            <AuthorizeView Policy="ExpUseDB_Admin">
+                                <Authorized><th>Actions</th></Authorized>
+                            </AuthorizeView>
+                        </tr>
+                    </thead>
+                    <tbody>
+                @foreach (var file in files)
+                {
+                    <tr>
+                        <td>
+                            <a target="_blank" rel="noopener" href="@PdfHref(file.Name)">@file.Name</a>
+                        </td>
+                        <td></td>
+                        <td>@(file.NoticeDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                        <td>@(file.UploadedDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                        <td class="text-muted small">@FormatSize(file.Size)</td>
+                        <AuthorizeView Policy="ExpUseDB_Admin">
+                            <Authorized>
+                                <td>
+                                    <button class="btn btn-outline-danger btn-sm" @onclick="() => DeleteAsync(file.Name)">
+                                        Delete
+                                    </button>
+                                </td>
+                            </Authorized>
+                        </AuthorizeView>
+                    </tr>
+                }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <AuthorizeView Policy="ExpUseDB_Admin">
+            <Authorized>
+                <hr />
+                <h3 class="h6">Add a notice PDF</h3>
+                <InputFile class="form-control" accept=".pdf,application/pdf" OnChange="UploadAsync" disabled="@isUploading" />
+                <div class="form-text">PDF only, up to 100 MB. Existing file names are not overwritten.</div>
+                @if (!string.IsNullOrWhiteSpace(uploadMessage))
+                {
+                    <div class="alert @(uploadSucceeded ? "alert-success" : "alert-danger") mt-2 mb-0">@uploadMessage</div>
+                }
+            </Authorized>
+        </AuthorizeView>
+    </section>
+}
+
+@code {
+    [Parameter] public string FolderName { get; set; } = "";
+
+    private NoticeFolder? folder;
+    private IReadOnlyList<NoticeFile> files = Array.Empty<NoticeFile>();
+    private string? errorMessage;
+    private string? uploadMessage;
+    private bool uploadSucceeded;
+    private bool isUploading;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            var folders = await NoticeStorage.GetFoldersAsync();
+            folder = folders.SingleOrDefault(item => string.Equals(item.FolderName, FolderName, StringComparison.Ordinal));
+            if (folder is null)
+            {
+                errorMessage = "The requested folder was not found.";
+                return;
+            }
+
+            files = NoticeStorage.GetFolderFiles(FolderName).Files;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or DirectoryNotFoundException or InvalidOperationException)
+        {
+            errorMessage = exception.Message;
+        }
+    }
+
+    private string PdfHref(string fileName) =>
+        $"40t-files/{Uri.EscapeDataString(FolderName)}/{Uri.EscapeDataString(fileName)}";
+
+    private async Task UploadAsync(InputFileChangeEventArgs args)
+    {
+        var file = args.File;
+        uploadMessage = null;
+        isUploading = true;
+        try
+        {
+            await using var stream = file.OpenReadStream(100 * 1024 * 1024);
+            await NoticeStorage.SavePdfAsync(FolderName, file.Name, stream, file.Size);
+            files = NoticeStorage.GetFolderFiles(FolderName).Files;
+            uploadSucceeded = true;
+            uploadMessage = $"{file.Name} was uploaded.";
+        }
+
+        catch (Exception exception) when (exception is IOException or InvalidOperationException or UnauthorizedAccessException)
+        {
+            uploadSucceeded = false;
+            uploadMessage = exception.Message;
+        }
+        finally
+        {
+            isUploading = false;
+        }
+    }
+
+    private async Task DeleteAsync(string fileName)
+    {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var authorization = await AuthorizationService.AuthorizeAsync(authenticationState.User, "ExpUseDB_Admin");
+        if (!authorization.Succeeded)
+        {
+            uploadSucceeded = false;
+            uploadMessage = "You are not authorized to delete notice PDFs.";
+            return;
+        }
+
+        var confirmed = await JS.InvokeAsync<bool>(
+            "confirm",
+            $"Delete '{fileName}' permanently? This cannot be undone.");
+        if (!confirmed)
+        {
+            return;
+        }
+
+        try
+        {
+            NoticeStorage.DeletePdf(FolderName, fileName);
+            files = NoticeStorage.GetFolderFiles(FolderName).Files;
+            uploadSucceeded = true;
+            uploadMessage = $"{fileName} was deleted.";
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or FileNotFoundException)
+        {
+            uploadSucceeded = false;
+            uploadMessage = exception.Message;
+        }
+    }
+
+    private static string FormatSize(long size) =>
+        size < 1024 * 1024 ? $"{size / 1024d:0.#} KB" : $"{size / 1024d / 1024d:0.##} MB";
+}

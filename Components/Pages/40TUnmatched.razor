@@ -1,0 +1,65 @@
+@page "/40T/unmatched"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "ExpUseDB_Read")]
+@inject NoticeStorageService NoticeStorage
+
+<PageTitle>Unmatched 40T folders</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <a class="btn btn-outline-secondary btn-sm mb-2" href="40T">Back to 40T folders</a>
+        <h1>Unmatched 40T folders</h1>
+    </div>
+</div>
+<p class="text-muted">These folders do not currently match a PropertyID in the properties table.</p>
+<input class="form-control mb-3" placeholder="Search unmatched folders..." @bind="searchTerm" @bind:event="oninput" />
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (folders is null)
+{
+    <p class="text-muted">Loading unmatched folders...</p>
+}
+else if (folders.Count == 0)
+{
+    <div class="alert alert-success">No unmatched folders were found.</div>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var item in FilteredFolders)
+        {
+            <a class="list-group-item list-group-item-action d-flex justify-content-between"
+               href="@($"40T/folder/{Uri.EscapeDataString(item.FolderName)}")">
+                <span>@item.FolderName</span>
+                <span class="badge text-bg-warning">Unmatched</span>
+            </a>
+        }
+    </div>
+}
+
+@code {
+    private IReadOnlyList<NoticeFolder>? folders;
+    private string searchTerm = "";
+    private string? errorMessage;
+
+    private IEnumerable<NoticeFolder> FilteredFolders =>
+        folders?.Where(folder => string.IsNullOrWhiteSpace(searchTerm)
+            || folder.FolderName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+        ?? Enumerable.Empty<NoticeFolder>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            folders = await NoticeStorage.GetFoldersAsync(unmatchedOnly: true);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or DirectoryNotFoundException)
+        {
+            errorMessage = exception.Message;
+        }
+    }
+}
