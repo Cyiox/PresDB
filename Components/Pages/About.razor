@@ -1,51 +1,262 @@
 @page "/About"
 @layout MainLayout
 
-<p>
-    Last updated 10-28-2026
-    This page also includes documentation for the decision tree functionality.
-</p>
+<PageTitle>About - PresDB</PageTitle>
 
-<h2>Decision Tree</h2>
-<p>The decision tree is a set of rules detailed below that are used to determine if a project is likely to maintain is
-    preservation status thorugh the set forcast date inside of the report section.
-    <a>The rules were devloped between a joint efford between Roberta Rubin, and Jameer Gomez-Santos </a>
-</p>
+<div class="mb-4">
+    <p class="text-uppercase text-muted small fw-semibold mb-1">CEDAC Preservation Database</p>
+    <h1 class="h2 mb-1">About and Documentation</h1>
+    <p class="text-muted mb-0">
+        A guide to the WebPresDB website, preservation assessment, data workflows, and notice archive.
+    </p>
+    <div class="small text-muted mt-2">Last updated November 18, 2026</div>
+</div>
 
-<h3>Decision Tree Rules</h3>
-<div>
-    <ul>
-        <ul>
-            <li>LIHTC Rule: If the <strong>"LIHTC_PIS" or "LIHTC_Alloc"</strong>field from the LIHTC tab (aka
-                "LIHTCPUB_archive" table) is less than 30 years from the forecast cuttoff date, then the project will
-                marked as preserved.</li>
-                <li>If the project recvied state LIHTC funding, the decsion tree will suggest the project be preserved if
-                    the forecast date is is within 45 years of the date LIHTC was awarded due to state LIHTC funding having
-                    a 45 year minimum term. This is evulated by checking the <strong>"State LIHTC Awarded"</strong> and
-                    subsequent awarded date fields in the DHCD_Archive table (EOHLC tab).
-                </li>
+<nav class="border rounded p-3 mb-4" aria-label="Documentation sections">
+    <strong class="d-block mb-2">On this page</strong>
+    <div class="d-flex flex-wrap gap-3 small">
+        <a href="#website">Website overview</a>
+        <a href="#property-search">Property search</a>
+        <a href="#reports">Reports</a>
+        <a href="#decision-tree">Preservation decision tree</a>
+        <a href="#40t-notices">40T notices</a>
+        <a href="#imports">Data imports</a>
+        <a href="#access">Accounts and access</a>
+    </div>
+</nav>
 
-            </ul>
-            >
-            <li>Rule 2, PRAC & 202s: If a project is identified a section 202 or PRAC/811 project, the decision tree will
-                suggest the project be preserved. This is because 202/811 projects are required to be owned by a nonprofit
-                and serve a sensitive population, and PRAC projects are required to be preserved by HUD.</li>
-                <a>The decision tree evaluates if a project is 202 or PRAC by:</a>
-                <ui>
-                    <ol>
-                        <li>If the <strong>"Program_Type_Group_Code"</strong> field in the
-                            MF_Assistance_and_Sec8_Contracts_archive (AKA HUD Contract tab) table contains "202" or "PRAC", the
-                            project is considered a 202 or PRAC project accordingly.</li>
-                            <li>If the <strong>property_catagory_name</strong> or <strong>"property_financing_type"</strong> fields
-                                in the MF_Properties_with_Assistance_and_Sec8_Contracts_archive (AKA HUD Propert tab) contains
-                                202/811 or PRAC, the project is considered a 202 or PRAC project accordingly.</li>
-                            </ol>
-                        </ui>
-                        
-                        <li>
-                            Override Rule: If a projects <strong>"Ar Risk Date Override" is before the override date, then the decision tree will suggest that the project remains preserved </strong>
-                        </li>
-                    </ul>
-    
+<section id="website" class="mb-4">
+    <h2 class="h4">Overview</h2>
+    <p>CEDAC's Preservation Database is a tool designed for tracking the affordablily status of housing projects across
+        Massachusetts. To achive this goal, the database collects and maintains data from serval public and internal
+        sources, linking them to a singular property record. CEDAC publishes an official preservation forecast report
+        bi-anualy that derives from the information inside of this database. This website includes features to search,
+        inspect source records, generate reports, and manage 40T notices.</p>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                    <h3 class="h6">Search</h3>
+                    <p class="small mb-0">Search the inventory by a general search term, city, or Property ID. Advanced
+                        search can filter HUD contract records by PRAC or 202 program type.</p>
+                    </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="border rounded p-3 h-100">
+                        <h3 class="h6">Reports</h3>
+                        <p class="small mb-0">Create a preservation assessment for a forecast date or build a custom spreadsheet
+                            from available database fields.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 h-100">
+                            <h3 class="h6">40T</h3>
+                            <p class="small mb-0">Browse notice folders stored on the file system, open notice PDFs, and identify
+                                folders that are not matched to a Property ID.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 h-100">
+                                <h3 class="h6">Import</h3>
+                                <p class="small mb-0">Upload configured CSV data, review unmatched source rows, and link or create
+                                    properties before the rows are used in later reports.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
+                    <section id="property-search" class="mb-4">
+                        <h2 class="h4">Property search and details</h2>
+                        <p>
+                            The home page searches the properties table using a project name or general term, city, Property ID,
+                            or HUD contract program type. Searches with text are automatically repeated after a short typing delay;
+                            the search button also performs an immediate search.
+                        </p>
+                        <p>
+                            Selecting a result opens the property inspector. The inspector summarizes unit counts, restrictions,
+                            organization names, comments, and source-specific unit counts. Its tabs organize linked records,
+                            including HUD property and contract records, LIHTC, DHCD, HUD active and terminated mortgages,
+                            USDA, MHP, MassHousing FOA, PBV, and at-risk or comment information.
+                        </p>
+                        <div class="alert alert-secondary small mb-0">
+                            A property detail page is restricted to users with database read access.
+                        </div>
+                    </section>
+
+                    <section id="reports" class="mb-4">
+                        <h2 class="h4">Reports</h2>
+
+                        <h3 class="h5 mt-3">Preservation report</h3>
+                        <p>
+                            A preservation report evaluates every property at a selected forecast date. The report can use the
+                            most recent import or the oldest available import for archive-backed fields. It returns each property's
+                            status, matching preservation rule or override, unit counts, and preserved-through date.
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Meaning</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="badge text-bg-success">Preserved</span></td>
+                                        <td>A preservation rule matched for the forecast date.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge text-bg-danger">At risk</span></td>
+                                        <td>No preservation rule matched, or an at-risk date override takes precedence.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3 class="h5 mt-4">Custom report</h3>
+                        <p>
+                            A custom report starts with Property ID and lets the user select additional fields from the report field
+                            catalog, search for fields, change column order, and download the result as CSV. The same most-recent or
+                            oldest-available snapshot option is available, with an optional filter for properties that have DHCD award
+                            records.
+                        </p>
+
+                        <h3 class="h5 mt-4">Past reports</h3>
+                        <p>
+                            Past Reports lists official preservation PDFs from the report archive. Each entry can be opened in a new browser
+                            tab.
+                        </p>
+                    </section>
+
+                    <section id="decision-tree" class="mb-4">
+                        <h2 class="h4">Preservation decision tree</h2>
+                        <p>
+                            The decision tree is a rule-based screening tool used by preservation reports. It does not make a legal
+                            determination; it records the rule or override that the current dataset used to classify a property at the
+                            selected forecast date. Rules are evaluated in the order listed below, and the first matching rule is shown.
+                        </p>
+
+                        <ol class="list-group list-group-numbered mb-3">
+                            <li class="list-group-item">
+                                <strong>Title VI override.</strong>
+                                A property marked Title II/VI as <strong>VI</strong> is preserved when the forecast date is on or before
+                                January 1, 2043.
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Title II override.</strong>
+                                A property marked as <strong>II</strong> is preserved only when its Title II at-risk date is on or before
+                                the forecast date.
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Active HUD mortgage section of act.</strong>
+                                A current mortgage with section code YHE or YHN is preserved only if its final endorsement date is within 15
+                                years of the forecast date.
+                                Codes ZPC, ZPD, ZPE, ZPF, ZPH, or ZPI preserve the property regardless of endorsement date.
+                            </li>
+                            <li class="list-group-item">
+                                <strong>HUD mortgage category or endorsement date.</strong>
+                                An active mortgage with SOA category <strong>236(j)(1)</strong> or <strong>202 Elderly</strong> preserves
+                                the property.
+                                A mortgage is also preserved when its final endorsement date is within 15 years of the forecast date.
+                            </li>
+                            <li class="list-group-item">
+                                <strong>HUD contract expiration.</strong>
+                                A HUD contract whose TRACS overall expiration date is on or after the forecast date preserves the property.
+                            </li>
+                            <li class="list-group-item">
+                                <strong>PRAC or 202 HUD contract.</strong>
+                                A HUD contract with <strong>PRAC</strong> or <strong>202</strong> in the program type group code field from HUD contracts feed preserves
+                                the property.
+                            </li>
+                            <li class="list-group-item">
+                                <strong>LIHTC award year.</strong>
+                                A property with a yr_pis or yr_alloc from the LIHTC feed that is that is less than 30 years ago will preserve the property as LIHTC restrctions have a minimum term of 30 years.
+
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Preserved-through date.</strong>
+                                A preserved-unit aging record preserves the property if its preserved-through date is on or after the
+                                forecast date and its units-at-risk value is zero or blank.
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Overrides.</strong>
+                                At-risk date overrides are manually entered by a CEDAC staff member. If the property's at-risk date override is on or after the forecast date,the property is considered preserved and that date is reported as the preserving rule.
+                            </li>
+                        </ol>
+
+                        <div class="alert alert-danger mb-0">
+                            <strong>At-risk override:</strong> if the property's at-risk date override is before the forecast date,
+                            the property is marked at risk regardless of another matching preservation rule. If no rule or qualifying
+                            override matches, the property is marked at risk with “No preservation rule matched.”
+                        </div>
+                    </section>
+
+                    <section id="40t-notices" class="mb-4">
+                        <h2 class="h4">40T notice system</h2>
+                        <p>
+                            The 40T page displays folders in the configured notice storage area. A folder is considered matched when
+                            text before the first hyphen is an integer Property ID and that ID exists in the properties table.
+                            Matched folders show the linked property; unmatched folders are listed separately.
+                        </p>
+                        <ul>
+                            <li>The main page searches matched folders by Property ID, folder name, or linked property search text and shows
+                                up to 100 folders unless a search is entered.</li>
+                                <li>Opening a folder shows all PDF files and attempts to read a notice date from the file name.</li>
+                                <li>The PDF viewer is available to users with database read access.</li>
+                                <li>Only administrators can upload or delete notice PDFs. Uploads must be PDF files no larger than 100 MB, and
+                                    existing file names are not overwritten.</li>
+                                </ul>
+                            </section>
+
+                            <section id="imports" class="mb-4">
+                                <h2 class="h4">Data imports</h2>
+                                <p>
+                                    The Import page is available to users with database edit access. It reviews the newest batch loaded for
+                                    each configured archive source. Existing linked rows are not changed.
+                                </p>
+                                <ol>
+                                    <li>Choose a configured data source and upload a CSV whose headers match the accepted archive columns.</li>
+                                    <li>Review rows in the newest batch that have not been linked, ignored, or connected to a property.</li>
+                                    <li>Enter an existing Property ID and link the row, create and link a new property, or mark the row as ignored.
+                                    </li>
+                                    <li>Export unmatched rows to CSV when a review needs to continue outside the website.</li>
+                                </ol>
+                                <p class="small text-muted mb-0">
+                                    Archive selections control which snapshot is displayed or reported. Database migrations and restore/import
+                                    operations remain separate administrative processes and are not performed by the report screen.
+                                </p>
+                            </section>
+
+                            <section id="access" class="mb-4">
+                                <h2 class="h4">Accounts and access</h2>
+                                <p>
+                                    Authentication uses Microsoft identity when enabled. The application has three database roles:
+                                </p>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Role</th>
+                                                <th>Typical access</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><code>ExpUseDB_Read</code></td>
+                                                <td>Search and open properties, view reports and 40T notices.</td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>ExpUseDB_Edit</code></td>
+                                                <td>Read access plus import review and property-link actions.</td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>ExpUseDB_Admin</code></td>
+                                                <td>Edit access plus 40T notice upload and deletion actions.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p class="small text-muted mb-0">
+                                    Development configurations may disable authentication and provide a development identity with all three roles.
+                                </p>
+                            </section>

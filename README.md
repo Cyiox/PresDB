@@ -1,21 +1,33 @@
 # CEDAC PresDB 
 
-This repository contains the code for CEDAC's web interface for the preservation database. It will include functionality for searching, generating reports, and importing and exporting information from the preservation database.
+This repository contains the code for CEDAC's web interface for the preservation database. It includes functionality for searching, generating reports, and importing and exporting information from the preservation database.
+
+## Known Bugs
+
+  - 40T notice page can not search a keyword more than 2 chracters 
+ - No UI to create a new project from scratch
+ - No implamentation to pull HUD data directly from the database
+ - The property details viewer pulls information based on import. 
+ - Property details page source viewer does not pull all of the feilds that the orghinal Access DB does. All those fields need to be pulled as a minimum
+
 
 ## TODO (Updated 10-8-26)
 
-- Migrate local Access data into a SQL Server Express database.
+- Can add coloriong for when a project has a data discrepency between external soruces that should not happen. (For example, the project having a differnet amount of total units between two or more soruces.)
 
-- Prototype initial UI
+ - Add admin page. Admin page will include features such as:
+   - Creating new project from scratch
+   - Pulling the HUD data like the Access DB does automaically. 
+   - Honestly the whole import tab can be moved over to the admin tab. No normal user should be importing anyway.
+   - View logs to seew which user has generated which report(s)
+
+ - Add lodading screen when switching between tabs. Some queries take longer than expected.
+
+-  UI Development
   
-  - [ ] Condensing information shared across multiple tabs into the front page.
-  - [ ] Report making expansion
   - [ ] Experimental matching feature
   - [ ] Interface to add/remove projects.
-  
-- Authentication for CRUD users.
-
-- Authentication for CEDAC users.
+  .
 
 - Migrating decision tree
 
@@ -23,25 +35,8 @@ This repository contains the code for CEDAC's web interface for the preservation
 
 - Expansion to report making
 
-  - Including the ability to create custom reports with a user-friendly UI\
-
- - Implementing restriction reason field.
-
- - Refining comments section
 
  - Add DHCD information export
-
-  
-
-## Completed
-
-- 1st search and property details prototype
-- User sign-in page
-- Prototype reports page
-- Comment section prototype. 
-
-
-
 
 ## Database connection
 
