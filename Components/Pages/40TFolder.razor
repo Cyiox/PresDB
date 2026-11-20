@@ -10,6 +10,9 @@
 @inject IAuthorizationService AuthorizationService
 @inject IJSRuntime JS
 
+@* This files contains the 40T detail page.*@
+
+
 <PageTitle>@FolderName - 40T Notices - PresDB</PageTitle>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -81,7 +84,7 @@ else
                         <td>
                             <a target="_blank" rel="noopener" href="@PdfHref(file.Name)">@file.Name</a>
                         </td>
-                        <td></td>
+                        <td>@(string.IsNullOrWhiteSpace(file.NoticeType) ? "N/A" : file.NoticeType)</td>
                         <td>@(file.NoticeDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
                         <td>@(file.UploadedDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
                         <td class="text-muted small">@FormatSize(file.Size)</td>

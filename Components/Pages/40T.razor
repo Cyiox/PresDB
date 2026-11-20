@@ -5,6 +5,8 @@
 @attribute [Authorize(Policy = "ExpUseDB_Read")]
 @inject NoticeStorageService NoticeStorage
 
+@* This file contains the 40T search / landing page.*@
+
 <PageTitle>40T Notices - PresDB</PageTitle>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -47,8 +49,24 @@
     </div>
 }
 
-<input class="form-control mb-3" placeholder="Search folders by property ID, city, or project name..."
-       value="@searchTerm" @oninput="SearchFoldersAsync" />
+<form class="row g-2 mb-3" @onsubmit="SearchFoldersAsync" @onsubmit:preventDefault="true">
+    <div class="col-md-7">
+        <input class="form-control" placeholder="Search folders by property ID, city, or project name..."
+               @bind="searchInput" @bind:event="oninput" />
+    </div>
+    <div class="col-md-3">
+        <select class="form-select" @bind="selectedNoticeType">
+            <option value="">All notice types</option>
+            @foreach (var noticeType in noticeTypes)
+            {
+                <option value="@noticeType">@noticeType</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2 d-grid">
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+</form>
 
 @if (!string.IsNullOrWhiteSpace(errorMessage))
 {
@@ -71,6 +89,7 @@ else
                     <th>Folder</th>
                     <th>Project name</th>
                     <th>Address</th>
+                    <th>Type of notice</th>
                     <th>Last updated</th>
                 </tr>
             </thead>
@@ -85,6 +104,7 @@ else
                 </td>
                 <td>@item.Property?.PropertyName</td>
                 <td>@item.Property?.Street, @item.Property?.City, @item.Property?.State @item.Property?.Zip</td>
+                <td>@(item.NoticeTypes.Count == 0 ? "N/A" : string.Join(" | ", item.NoticeTypes))</td>
                 <td>@(item.LastUpdated?.ToString("yyyy-MM-dd") ?? "N/A")</td>
             </tr>
         }
@@ -97,23 +117,27 @@ else
     private IReadOnlyList<NoticeFolder>? folders;
     private NoticeStorageStatistics? statistics;
     private string searchTerm = "";
+    private string searchInput = "";
+    private IReadOnlyList<string> noticeTypes = Array.Empty<string>();
+    private string selectedNoticeType = "";
     private string? errorMessage;
 
     private IEnumerable<NoticeFolder> FilteredFolders => folders ?? Enumerable.Empty<NoticeFolder>();
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadFoldersAsync(null);
+        noticeTypes = await NoticeStorage.GetNoticeTypesAsync();
+        await LoadFoldersAsync();
     }
 
-    private async Task SearchFoldersAsync(ChangeEventArgs args)
+    private async Task SearchFoldersAsync()
     {
-        await LoadFoldersAsync(args.Value?.ToString());
+        await LoadFoldersAsync();
     }
 
-    private async Task LoadFoldersAsync(string? term)
+    private async Task LoadFoldersAsync()
     {
-        searchTerm = term?.Trim() ?? "";
+        searchTerm = searchInput.Trim();
         errorMessage = null;
         try
         {
@@ -121,8 +145,9 @@ else
             folders = await NoticeStorage.GetFoldersAsync(
                 searchTerm,
                 matchedOnly: true,
+                noticeType: selectedNoticeType,
                 maxResults: string.IsNullOrWhiteSpace(searchTerm) ? 100 : null);
-            statistics = await NoticeStorage.GetStatisticsAsync(requestedTerm);
+            statistics = await NoticeStorage.GetStatisticsAsync(requestedTerm, selectedNoticeType);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or DirectoryNotFoundException)
         {

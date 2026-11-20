@@ -10,6 +10,7 @@ public sealed class NoticeStorageService
     private const long MaximumPdfSize = 100 * 1024 * 1024;
     private readonly PreservationTestContext db;
     private readonly string rootPath;
+    private readonly string extractedDataPath;
     private readonly ILogger<NoticeStorageService> logger;
 
     public NoticeStorageService(
@@ -24,12 +25,14 @@ public sealed class NoticeStorageService
         rootPath = Path.GetFullPath(Path.IsPathRooted(configuredPath)
             ? configuredPath
             : Path.Combine(environment.ContentRootPath, configuredPath));
+        extractedDataPath = Path.Combine(environment.ContentRootPath, "40t_extracted_notices.csv");
     }
 
     public async Task<IReadOnlyList<NoticeFolder>> GetFoldersAsync(
         string? searchTerm = null,
         bool unmatchedOnly = false,
         bool matchedOnly = false,
+        string? noticeType = null,
         int? maxResults = null,
         CancellationToken cancellationToken = default)
     {
@@ -40,8 +43,6 @@ public sealed class NoticeStorageService
 
         var directories = Directory.EnumerateDirectories(rootPath)
             .Select(path => new DirectoryInfo(path))
-            .Where(directory => string.IsNullOrWhiteSpace(searchTerm)
-                || directory.Name.Contains(searchTerm.Trim(), StringComparison.OrdinalIgnoreCase))
             .OrderBy(directory => directory.Name, StringComparer.OrdinalIgnoreCase)
             .ToList();
 
@@ -57,19 +58,44 @@ public sealed class NoticeStorageService
             .Where(property => propertyIds.Contains(property.PropertyId))
             .ToDictionaryAsync(property => property.PropertyId, cancellationToken);
 
+        var extractedTypes = LoadExtractedNoticeTypes();
+        var dbNoticeTypes = await db.Tbl40Tdocuments
+            .AsNoTracking()
+            .Where(document => document.PropertyId.HasValue && document.NoticeType != null)
+            .Select(document => new { document.PropertyId, document.NoticeType })
+            .ToListAsync(cancellationToken);
+
         var folders = directories
             .Select(directory =>
             {
                 var propertyId = ParsePropertyId(directory.Name);
                 properties.TryGetValue(propertyId ?? 0, out var property);
-                var latestDate = GetFolderFiles(directory.Name).Files
+                var folderFiles = GetFolderFiles(directory.Name).Files;
+                var latestDate = folderFiles
                     .Where(file => file.NoticeDate.HasValue)
                     .Select(file => file.NoticeDate)
                     .Max();
-                return new NoticeFolder(directory.Name, propertyId, property, latestDate);
+                var csvTypes = extractedTypes
+                    .Where(entry => string.Equals(entry.FolderName, directory.Name, StringComparison.Ordinal))
+                    .SelectMany(entry => entry.NoticeTypes)
+                    .Concat(dbNoticeTypes
+                        .Where(document => document.PropertyId == propertyId)
+                        .Select(document => NormalizeNoticeType(document.NoticeType)))
+                    .Where(type => !string.IsNullOrWhiteSpace(type))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(type => type, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+                return new NoticeFolder(directory.Name, propertyId, property, latestDate, csvTypes);
             })
+            .Where(folder => string.IsNullOrWhiteSpace(searchTerm)
+                || folder.FolderName.Contains(searchTerm.Trim(), StringComparison.OrdinalIgnoreCase)
+                || folder.PropertyId?.ToString(CultureInfo.InvariantCulture).Contains(searchTerm.Trim(), StringComparison.OrdinalIgnoreCase) == true
+                || (folder.Property?.PropertyName?.Contains(searchTerm.Trim(), StringComparison.OrdinalIgnoreCase) ?? false)
+                || (folder.Property?.City?.Contains(searchTerm.Trim(), StringComparison.OrdinalIgnoreCase) ?? false))
             .Where(folder => !unmatchedOnly || folder.Property is null)
             .Where(folder => !matchedOnly || folder.Property is not null)
+            .Where(folder => string.IsNullOrWhiteSpace(noticeType)
+                || folder.NoticeTypes.Contains(noticeType, StringComparer.OrdinalIgnoreCase))
             .ToList();
 
         return maxResults.HasValue ? folders.Take(Math.Max(0, maxResults.Value)).ToList() : folders;
@@ -88,7 +114,12 @@ public sealed class NoticeStorageService
             {
                 var name = Path.GetFileName(path);
                 var noticeDate = ParseNoticeDate(name);
-                return new NoticeFile(name, new FileInfo(path).Length, noticeDate, noticeDate);
+                var noticeType = LoadExtractedNoticeTypes()
+                    .Where(entry => string.Equals(entry.FolderName, folderName, StringComparison.Ordinal)
+                        && string.Equals(entry.FileName, name, StringComparison.OrdinalIgnoreCase))
+                    .Select(entry => string.Join(" | ", entry.NoticeTypes))
+                    .FirstOrDefault();
+                return new NoticeFile(name, new FileInfo(path).Length, noticeDate, noticeDate, noticeType);
             })
             .OrderBy(file => file.Name, StringComparer.OrdinalIgnoreCase)
             .ToList();
@@ -98,12 +129,14 @@ public sealed class NoticeStorageService
 
     public async Task<NoticeStorageStatistics> GetStatisticsAsync(
         string? searchTerm = null,
+        string? noticeType = null,
         CancellationToken cancellationToken = default)
     {
         var allFolders = await GetFoldersAsync(cancellationToken: cancellationToken);
         var matchingFolders = await GetFoldersAsync(
             searchTerm,
             matchedOnly: true,
+            noticeType: noticeType,
             cancellationToken: cancellationToken);
         var allFiles = allFolders
             .SelectMany(folder => GetFolderFiles(folder.FolderName).Files)
@@ -117,6 +150,25 @@ public sealed class NoticeStorageService
                 .Select(file => file.UploadedDate)
                 .Max(),
             matchingFolders.Count);
+    }
+
+    public async Task<IReadOnlyList<string>> GetNoticeTypesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var csvTypes = LoadExtractedNoticeTypes()
+            .SelectMany(entry => entry.NoticeTypes);
+        var databaseTypes = await db.Tbl40Tdocuments
+            .AsNoTracking()
+            .Where(document => document.NoticeType != null)
+            .Select(document => document.NoticeType!)
+            .ToListAsync(cancellationToken);
+
+        return csvTypes
+            .Concat(databaseTypes.Select(NormalizeNoticeType))
+            .Where(type => !string.IsNullOrWhiteSpace(type))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(type => type, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 
     public string GetPdfPath(string folderName, string fileName)
@@ -187,6 +239,115 @@ public sealed class NoticeStorageService
         return folderPath;
     }
 
+    private IReadOnlyList<ExtractedNoticeEntry> LoadExtractedNoticeTypes()
+    {
+        if (!File.Exists(extractedDataPath))
+        {
+            return Array.Empty<ExtractedNoticeEntry>();
+        }
+
+        using var reader = new StreamReader(extractedDataPath);
+        var header = ParseCsvLine(reader.ReadLine());
+        var columnIndexes = header
+            .Select((name, index) => new { name = name.Trim(), index })
+            .ToDictionary(item => item.name, item => item.index, StringComparer.OrdinalIgnoreCase);
+
+        if (!columnIndexes.TryGetValue("folder_name", out var folderIndex)
+            || !columnIndexes.TryGetValue("file_name", out var fileIndex)
+            || !columnIndexes.TryGetValue("checked_notifications", out var noticeIndex))
+        {
+            return Array.Empty<ExtractedNoticeEntry>();
+        }
+
+        var entries = new List<ExtractedNoticeEntry>();
+        string? line;
+        while ((line = reader.ReadLine()) is not null)
+        {
+            var values = ParseCsvLine(line);
+            if (folderIndex >= values.Count || fileIndex >= values.Count || noticeIndex >= values.Count)
+            {
+                continue;
+            }
+
+            var noticeTypes = values[noticeIndex]
+                .Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(NormalizeNoticeType)
+                .Where(type => !string.IsNullOrWhiteSpace(type))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            if (noticeTypes.Length > 0)
+            {
+                entries.Add(new ExtractedNoticeEntry(values[folderIndex], values[fileIndex], noticeTypes));
+            }
+        }
+
+        return entries;
+    }
+
+    private static IReadOnlyList<string> ParseCsvLine(string? line)
+    {
+        var values = new List<string>();
+        if (line is null)
+        {
+            return values;
+        }
+
+        var current = new System.Text.StringBuilder();
+        var inQuotes = false;
+        for (var index = 0; index < line.Length; index++)
+        {
+            var character = line[index];
+            if (character == '"')
+            {
+                if (inQuotes && index + 1 < line.Length && line[index + 1] == '"')
+                {
+                    current.Append('"');
+                    index++;
+                }
+                else
+                {
+                    inQuotes = !inQuotes;
+                }
+            }
+            else if (character == ',' && !inQuotes)
+            {
+                values.Add(current.ToString());
+                current.Clear();
+            }
+            else
+            {
+                current.Append(character);
+            }
+        }
+        values.Add(current.ToString());
+        return values;
+    }
+
+    private static string NormalizeNoticeType(string? noticeType)
+    {
+        if (string.IsNullOrWhiteSpace(noticeType))
+        {
+            return "";
+        }
+
+        var type = noticeType.Trim();
+        if (type.StartsWith("1 Year Notice", StringComparison.OrdinalIgnoreCase))
+        {
+            return "1 Year Notice";
+        }
+        if (type.StartsWith("2 Year Notice", StringComparison.OrdinalIgnoreCase))
+        {
+            return "2 Year Notice";
+        }
+        if (type.Equals("Notice of Intent To Sell", StringComparison.OrdinalIgnoreCase)
+            || type.Equals("Notice of Intent to Sell to a Preservation Buyer", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Notice of Intent to Sell";
+        }
+        return type;
+    }
+
     private void EnsureWithinRoot(string path)
     {
         var rootWithSeparator = rootPath.EndsWith(Path.DirectorySeparatorChar)
@@ -233,12 +394,7 @@ public sealed class NoticeStorageService
     }
 }
 
-public sealed record NoticeFolder(string FolderName, int? PropertyId, Property? Property, DateTime? LastUpdated)
-{
-    public bool IsMatched => Property is not null;
-}
-
-public sealed record NoticeFile(string Name, long Size, DateTime? NoticeDate, DateTime? UploadedDate);
+public sealed record NoticeFile(string Name, long Size, DateTime? NoticeDate, DateTime? UploadedDate, string? NoticeType);
 
 public sealed record NoticeFileResult(string FolderName, IReadOnlyList<NoticeFile> Files);
 
@@ -247,3 +403,18 @@ public sealed record NoticeStorageStatistics(
     int TotalProjectCount,
     DateTime? MostRecentUpload,
     int MatchingProjectCount);
+
+public sealed record NoticeFolder(
+    string FolderName,
+    int? PropertyId,
+    Property? Property,
+    DateTime? LastUpdated,
+    IReadOnlyList<string> NoticeTypes)
+{
+    public bool IsMatched => Property is not null;
+}
+
+internal sealed record ExtractedNoticeEntry(
+    string FolderName,
+    string FileName,
+    IReadOnlyList<string> NoticeTypes);

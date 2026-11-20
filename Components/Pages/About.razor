@@ -12,18 +12,7 @@
     <div class="small text-muted mt-2">Last updated November 18, 2026</div>
 </div>
 
-<nav class="border rounded p-3 mb-4" aria-label="Documentation sections">
-    <strong class="d-block mb-2">On this page</strong>
-    <div class="d-flex flex-wrap gap-3 small">
-        <a href="#website">Website overview</a>
-        <a href="#property-search">Property search</a>
-        <a href="#reports">Reports</a>
-        <a href="#decision-tree">Preservation decision tree</a>
-        <a href="#40t-notices">40T notices</a>
-        <a href="#imports">Data imports</a>
-        <a href="#access">Accounts and access</a>
-    </div>
-</nav>
+
 
 <section id="website" class="mb-4">
     <h2 class="h4">Overview</h2>
@@ -78,9 +67,6 @@
                             including HUD property and contract records, LIHTC, DHCD, HUD active and terminated mortgages,
                             USDA, MHP, MassHousing FOA, PBV, and at-risk or comment information.
                         </p>
-                        <div class="alert alert-secondary small mb-0">
-                            A property detail page is restricted to users with database read access.
-                        </div>
                     </section>
 
                     <section id="reports" class="mb-4">
@@ -165,12 +151,14 @@
                             </li>
                             <li class="list-group-item">
                                 <strong>PRAC or 202 HUD contract.</strong>
-                                A HUD contract with <strong>PRAC</strong> or <strong>202</strong> in the program type group code field from HUD contracts feed preserves
+                                A HUD contract with <strong>PRAC</strong> or <strong>202</strong> in the program type group code field from
+                                HUD contracts feed preserves
                                 the property.
                             </li>
                             <li class="list-group-item">
                                 <strong>LIHTC award year.</strong>
-                                A property with a yr_pis or yr_alloc from the LIHTC feed that is that is less than 30 years ago will preserve the property as LIHTC restrctions have a minimum term of 30 years.
+                                A property with a yr_pis or yr_alloc from the LIHTC feed that is that is less than 30 years ago will
+                                preserve the property as LIHTC restrctions have a minimum term of 30 years.
 
                             </li>
                             <li class="list-group-item">
@@ -180,7 +168,9 @@
                             </li>
                             <li class="list-group-item">
                                 <strong>Overrides.</strong>
-                                At-risk date overrides are manually entered by a CEDAC staff member. If the property's at-risk date override is on or after the forecast date,the property is considered preserved and that date is reported as the preserving rule.
+                                At-risk date overrides are manually entered by a CEDAC staff member. If the property's at-risk date override
+                                is on or after the forecast date,the property is considered preserved and that date is reported as the
+                                preserving rule.
                             </li>
                         </ol>
 
